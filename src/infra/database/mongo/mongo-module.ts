@@ -1,0 +1,17 @@
+import environment from '@/configs/environment';
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MongoService } from '@/infra/database/mongo/mongo-service';
+import models from '@/infra/database/mongo/models';
+
+@Module({
+  exports: [MongoService],
+  imports: [
+    MongooseModule.forRoot(environment.MONGO_URL, {
+      dbName: environment.DB_DATABASE,
+    }),
+    MongooseModule.forFeature(models),
+  ],
+  providers: [MongoService],
+})
+export class MongoModule {}
