@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { SessionService } from '@/modules/session/session.service';
+import { SessionService } from '@/modules/user/sub-modules/session/session.service';
 import { User } from '@/modules/user/entities/user.entity';
-import { SessionPresenter } from '@/modules/session/presenters/session.presenter';
+import { SessionPresenter } from '@/modules/user/sub-modules/session/presenters/session.presenter';
 
 @Injectable()
 export class AuthRefreshUsecase {

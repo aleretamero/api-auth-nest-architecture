@@ -1,7 +1,15 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { User } from '@/modules/user/entities/user.entity';
-import { UserCodeStatus } from '@/modules/user-code/enums/user-code-status.enum';
-import { UserCodeType } from '@/modules/user-code/enums/user-code-type.enum';
+import { UserCodeStatus } from '@/modules/user/sub-modules/user-code/enums/user-code-status.enum';
+import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
 import { ID } from '@/common/shared/id';
 
 @Entity('user_codes')
@@ -24,9 +32,16 @@ export class UserCode {
   @Column('bigint', { name: 'expires_in' })
   expiresIn!: number;
 
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt!: Date;
+
   @ManyToOne(() => User, (x) => x.userCodes, {
     onDelete: 'RESTRICT',
     onUpdate: 'CASCADE',
+    deferrable: 'INITIALLY DEFERRED',
   })
   @JoinColumn({
     foreignKeyConstraintName: 'USER_CODE_USER_FK',

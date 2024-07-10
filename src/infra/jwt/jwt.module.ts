@@ -5,10 +5,8 @@ import { JwtService } from '@/infra/jwt/jwt.service';
 
 @Module({
   imports: [
-    NestJwtModule.registerAsync({
-      useFactory: () => ({
-        secret: environments.JWT_SECRET,
-      }),
+    NestJwtModule.register({
+      secret: environments.JWT_SECRET,
     }),
   ],
   providers: [JwtService],

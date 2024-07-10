@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { HashService } from '@/infra/hash/hash.service';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
-import { SessionService } from '@/modules/session/session.service';
+import { SessionService } from '@/modules/user/sub-modules/session/session.service';
 import { AuthRegisterDto } from '@/modules/auth/dtos/auth-register.dto';
-import { UserCodeService } from '@/modules/user-code/user-code.service';
-import { UserCodeType } from '@/modules/user-code/enums/user-code-type.enum';
-import { SessionPresenter } from '@/modules/session/presenters/session.presenter';
+import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
+import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
+import { SessionPresenter } from '@/modules/user/sub-modules/session/presenters/session.presenter';
+import { AuthWelcomeQueue } from '@/modules/auth/queues/auth-welcome.queue';
 
 @Injectable()
 export class AuthRegisterUsecase {
@@ -14,6 +15,7 @@ export class AuthRegisterUsecase {
     private readonly hashService: HashService,
     private readonly userCodeService: UserCodeService,
     private readonly sessionService: SessionService,
+    private readonly authWelcomeQueue: AuthWelcomeQueue,
   ) {}
 
   async execute(
@@ -35,9 +37,12 @@ export class AuthRegisterUsecase {
       passwordHash,
     });
 
-    await this.userCodeService.create(user, UserCodeType.EMAIL_VERIFICATION);
+    const code = await this.userCodeService.create(
+      user,
+      UserCodeType.EMAIL_VERIFICATION,
+    );
 
-    // TODO: Send email with code
+    await this.authWelcomeQueue.add({ code, email: user.email });
 
     await this.typeormService.user.save(user);
 

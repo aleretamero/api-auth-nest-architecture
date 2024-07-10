@@ -3,7 +3,7 @@ import { HashService } from '@/infra/hash/hash.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@/infra/jwt/jwt.service';
 import { User } from '@/modules/user/entities/user.entity';
-import { SessionPresenter } from '@/modules/session/presenters/session.presenter';
+import { SessionPresenter } from '@/modules/user/sub-modules/session/presenters/session.presenter';
 
 @Injectable()
 export class SessionService {
@@ -18,15 +18,18 @@ export class SessionService {
     user: User,
     deviceIdentifier: string,
   ): Promise<SessionPresenter> {
-    const sessions = await this.typeormService.session.find({
+    const sessionsCount = await this.typeormService.session.count({
       where: {
         userId: user.id,
         deviceIdentifier,
       },
     });
 
-    if (sessions.length > 0) {
-      await this.typeormService.session.remove(sessions);
+    if (sessionsCount > 0) {
+      await this.typeormService.session.delete({
+        userId: user.id,
+        deviceIdentifier,
+      });
     }
 
     const accessToken = await this.jwtService.sign({
@@ -60,15 +63,9 @@ export class SessionService {
   }
 
   async remove(user: User, deviceIdentifier: string): Promise<void> {
-    const sessions = await this.typeormService.session.find({
-      where: {
-        userId: user.id,
-        deviceIdentifier,
-      },
+    await this.typeormService.session.delete({
+      userId: user.id,
+      deviceIdentifier,
     });
-
-    if (sessions.length > 0) {
-      await this.typeormService.session.remove(sessions);
-    }
   }
 }

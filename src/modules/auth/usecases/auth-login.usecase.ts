@@ -2,8 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { HashService } from '@/infra/hash/hash.service';
 import { AuthLoginDto } from '@/modules/auth/dtos/auth-login.dto';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
-import { SessionService } from '@/modules/session/session.service';
-import { SessionPresenter } from '@/modules/session/presenters/session.presenter';
+import { SessionService } from '@/modules/user/sub-modules/session/session.service';
+import { SessionPresenter } from '@/modules/user/sub-modules/session/presenters/session.presenter';
 
 @Injectable()
 export class AuthLoginUsecase {

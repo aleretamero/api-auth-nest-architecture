@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeormModule } from '@/infra/database/postgres/typeorm-module';
-import { UserCodeService } from '@/modules/user-code/user-code.service';
+import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
+import { HashModule } from '@/infra/hash/hash.module';
 
 @Module({
-  imports: [TypeormModule],
+  imports: [TypeormModule, HashModule],
   providers: [UserCodeService],
   exports: [UserCodeService],
 })

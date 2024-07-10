@@ -1,31 +1,41 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
-import { UserCodeStatus } from '@/modules/user-code/enums/user-code-status.enum';
-import { UserCodeType } from '@/modules/user-code/enums/user-code-type.enum';
+import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
 import { AuthConfirmForgotPasswordDto } from '../dtos/auth-confirm-forgot-password.dto';
+import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
 
 @Injectable()
 export class AuthConfirmForgotPasswordUsecase {
-  constructor(private readonly typeormService: TypeormService) {}
+  constructor(
+    private readonly typeormService: TypeormService,
+    private readonly userCodeService: UserCodeService,
+  ) {}
 
   async execute(
     authConfirmForgotPasswordDto: AuthConfirmForgotPasswordDto,
   ): Promise<void> {
-    const userCode = await this.typeormService.userCode.findOne({
+    const user = await this.typeormService.user.findOne({
       where: {
-        user: { email: authConfirmForgotPasswordDto.email },
-        status: UserCodeStatus.PENDING,
-        type: UserCodeType.RESET_PASSWORD,
-        code: authConfirmForgotPasswordDto.code,
+        email: authConfirmForgotPasswordDto.email,
       },
     });
 
-    if (!userCode) {
-      throw new BadRequestException('Invalid parameters');
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
 
-    await this.typeormService.userCode.update(userCode.id, {
-      status: UserCodeStatus.VERIFIED,
-    });
+    const isValid = await this.userCodeService.confirm(
+      user,
+      UserCodeType.FORGOT_PASSWORD,
+      authConfirmForgotPasswordDto.code,
+    );
+
+    if (!isValid) {
+      throw new BadRequestException('Invalid code');
+    }
   }
 }

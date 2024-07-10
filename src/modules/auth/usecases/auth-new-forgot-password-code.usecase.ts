@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserCodeType } from '@/modules/user-code/enums/user-code-type.enum';
+import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
-import { UserCodeService } from '@/modules/user-code/user-code.service';
+import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
+import { AuthForgotPasswordQueue } from '../queues/auth-forgot-password.queue';
 
 @Injectable()
 export class AuthNewForgotPasswordCodeUsecase {
   constructor(
     private readonly typeormService: TypeormService,
     private readonly userCodeService: UserCodeService,
+    private readonly authForgotPasswordQueue: AuthForgotPasswordQueue,
   ) {}
 
   async execute(email: string): Promise<void> {
@@ -19,6 +21,14 @@ export class AuthNewForgotPasswordCodeUsecase {
       throw new NotFoundException('User not found');
     }
 
-    await this.userCodeService.create(user, UserCodeType.RESET_PASSWORD);
+    const code = await this.userCodeService.create(
+      user,
+      UserCodeType.FORGOT_PASSWORD,
+    );
+
+    await this.authForgotPasswordQueue.add({
+      email: user.email,
+      code,
+    });
   }
 }

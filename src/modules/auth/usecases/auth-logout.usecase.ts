@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SessionService } from '@/modules/session/session.service';
+import { SessionService } from '@/modules/user/sub-modules/session/session.service';
 import { User } from '@/modules/user/entities/user.entity';
 
 @Injectable()

@@ -1,5 +1,5 @@
-import { Session } from '@/modules/session/entities/session.entity';
-import { UserCode } from '@/modules/user-code/entities/user-code.entity';
+import { Session } from '@/modules/user/sub-modules/session/entities/session.entity';
+import { UserCode } from '@/modules/user/sub-modules/user-code/entities/user-code.entity';
 import { User } from '@/modules/user/entities/user.entity';
 import { Injectable, Scope } from '@nestjs/common';
 import { EntityManager, QueryRunner, Repository } from 'typeorm';

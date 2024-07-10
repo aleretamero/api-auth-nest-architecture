@@ -1,25 +1,14 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@/infra/jwt/jwt.module';
-import { HashModule } from '@/infra/hash/hash.module';
-import { TypeormModule } from '@/infra/database/postgres/typeorm-module';
-import { UserModule } from '@/modules/user/user.module';
-import { AuthModule } from '@/modules/auth/auth.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingErrorInterceptor } from '@/common/interceptors/log-error.interceptor';
-import { MongoModule } from '@/infra/database/mongo/mongo-module';
-import { SessionModule } from '@/modules/session/session.module';
 import { AuthGuard } from '@/common/guards/auth.guard';
 
+import ModulesModules from '@/modules';
+import InfraModules from '@/infra';
+// import { ThrottlerGuard } from '@nestjs/throttler';
+
 @Module({
-  imports: [
-    TypeormModule,
-    MongoModule,
-    JwtModule,
-    HashModule,
-    AuthModule,
-    UserModule,
-    SessionModule,
-  ],
+  imports: [...InfraModules, ...ModulesModules],
   providers: [
     // { provide: APP_GUARD, useClass: ThrottlerGuard }, // call ThrottlerGuard first so it runs before
     { provide: APP_GUARD, useClass: AuthGuard },

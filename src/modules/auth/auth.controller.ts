@@ -16,7 +16,7 @@ import { AuthConfirmEmailUsecase } from '@/modules/auth/usecases/auth-confirm-em
 import { AuthConfirmForgotPasswordUsecase } from '@/modules/auth/usecases/auth-confirm-forgot-password.usecase';
 import { AuthResetPasswordUsecase } from '@/modules/auth/usecases/auth-reset-password.usecase';
 import { AuthResetPasswordDto } from '@/modules/auth/dtos/auth-reset-password.dto';
-import { AuthNewConfirmEmailCodeUsecase } from '@/modules/auth/usecases/auth-new-confirm-email-code.usecase';
+import { AuthNewConfirmEmailCodeCodeUsecase } from '@/modules/auth/usecases/auth-new-confirm-email-code.usecase';
 import { ParseEmailPipe } from '@/common/pipes/parse-email.pipe';
 import { AuthNewForgotPasswordCodeUsecase } from '@/modules/auth/usecases/auth-new-forgot-password-code.usecase';
 import { AuthConfirmForgotPasswordDto } from '@/modules/auth/dtos/auth-confirm-forgot-password.dto';
@@ -26,18 +26,21 @@ import { AuthRefreshUsecase } from '@/modules/auth/usecases/auth-refresh.usecase
 import { User } from '@/modules/user/entities/user.entity';
 import { Public } from '@/common/decorators/public.decorator';
 import { AuthRefreshGuard } from '@/common/guards/auth-refresh.guard';
-import { SessionPresenter } from '@/modules/session/presenters/session.presenter';
+import { SessionPresenter } from '@/modules/user/sub-modules/session/presenters/session.presenter';
 import { AuthMeUsecase } from '@/modules/auth/usecases/auth-me.usecase';
 import { UserPresenter } from '../user/presenters/user.presenter';
+import { ApiResponse } from '@/common/swagger/api-config.swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(
     private readonly authRegisterUsecase: AuthRegisterUsecase,
     private readonly authLoginUsecase: AuthLoginUsecase,
     private readonly authLogoutUsecase: AuthLogoutUsecase,
     private readonly authRefreshUsecase: AuthRefreshUsecase,
-    private readonly authNewConfirmEmailCodeUsecase: AuthNewConfirmEmailCodeUsecase,
+    private readonly authNewConfirmEmailCodeUsecase: AuthNewConfirmEmailCodeCodeUsecase,
     private readonly authConfirmEmailUsecase: AuthConfirmEmailUsecase,
     private readonly authNewForgotPasswordCodeUsecase: AuthNewForgotPasswordCodeUsecase,
     private readonly authConfirmForgotPasswordUsecase: AuthConfirmForgotPasswordUsecase,
@@ -47,6 +50,7 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({ status: 400 })
   @Public()
   async register(
     @DeviceIdentifier() deviceIdentifier: string,
@@ -57,6 +61,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: 400 })
   @Public()
   async login(
     @DeviceIdentifier() deviceIdentifier: string,
@@ -67,6 +72,7 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: [400, 401] })
   async logout(
     @DeviceIdentifier() deviceIdentifier: string,
     @CurrentUser() user: User,
@@ -77,6 +83,7 @@ export class AuthController {
   @UseGuards(AuthRefreshGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: [400, 401] }) // TODO: update guard to return 400
   @Public()
   async refresh(
     @DeviceIdentifier() deviceIdentifier: string,
@@ -87,6 +94,7 @@ export class AuthController {
 
   @Post('email/new-code')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: [400, 404] })
   @Public()
   async newEmailCode(
     @Body('email', ParseEmailPipe) email: string,
@@ -96,6 +104,7 @@ export class AuthController {
 
   @Post('email/confirm')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: 400 })
   @Public()
   async confirmEmail(@Body() body: AuthConfirmEmailDto): Promise<void> {
     return this.authConfirmEmailUsecase.execute(body);
@@ -103,6 +112,7 @@ export class AuthController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: [400, 404] })
   @Public()
   async forgotPassword(
     @Body('email', ParseEmailPipe) email: string,
@@ -112,6 +122,7 @@ export class AuthController {
 
   @Post('forgot-password/confirm')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: 400 })
   @Public()
   async confirmForgotPassword(
     @Body() body: AuthConfirmForgotPasswordDto,
@@ -121,6 +132,7 @@ export class AuthController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: [400, 404] })
   @Public()
   async resetPassword(
     @DeviceIdentifier() deviceIdentifier: string,
@@ -130,6 +142,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @ApiResponse({ status: [400, 401] })
   async me(@CurrentUser() user: User): Promise<UserPresenter> {
     return await this.authMeUsecase.execute(user);
   }

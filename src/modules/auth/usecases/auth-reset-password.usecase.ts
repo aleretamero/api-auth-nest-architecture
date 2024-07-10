@@ -1,12 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { In } from 'typeorm';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
-import { SessionService } from '@/modules/session/session.service';
+import { SessionService } from '@/modules/user/sub-modules/session/session.service';
 import { AuthResetPasswordDto } from '@/modules/auth/dtos/auth-reset-password.dto';
 import { HashService } from '@/infra/hash/hash.service';
-import { UserCodeStatus } from '@/modules/user-code/enums/user-code-status.enum';
-import { UserCodeType } from '@/modules/user-code/enums/user-code-type.enum';
-import { SessionPresenter } from '@/modules/session/presenters/session.presenter';
+import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
+import { SessionPresenter } from '@/modules/user/sub-modules/session/presenters/session.presenter';
+import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
 
 @Injectable()
 export class AuthResetPasswordUsecase {
@@ -14,6 +17,7 @@ export class AuthResetPasswordUsecase {
     private readonly typeormService: TypeormService,
     private readonly hashService: HashService,
     private readonly sessionService: SessionService,
+    private readonly userCodeService: UserCodeService,
   ) {}
 
   async execute(
@@ -28,29 +32,22 @@ export class AuthResetPasswordUsecase {
       throw new NotFoundException('User not found');
     }
 
-    const userCode = await this.typeormService.userCode.findOne({
-      where: {
-        user: { id: user.id },
-        status: In([UserCodeStatus.PENDING, UserCodeStatus.VERIFIED]),
-        type: UserCodeType.RESET_PASSWORD,
-        code: authResetPasswordDto.code,
-      },
-    });
+    const isValid = await this.userCodeService.confirm(
+      user,
+      UserCodeType.FORGOT_PASSWORD,
+      authResetPasswordDto.code,
+    );
 
-    if (!userCode) {
-      throw new NotFoundException('Invalid code');
+    if (!isValid) {
+      throw new BadRequestException('Invalid code');
     }
 
     const passwordHash = await this.hashService.hash(
       authResetPasswordDto.password,
     );
 
-    await this.typeormService.user.update(userCode.userId, {
+    await this.typeormService.user.update(user.id, {
       passwordHash,
-    });
-
-    await this.typeormService.userCode.update(userCode.id, {
-      status: UserCodeStatus.USED,
     });
 
     return await this.sessionService.create(user, deviceIdentifier);

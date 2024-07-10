@@ -1,7 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryColumn, Unique } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
 import { ID } from '@/common/shared/id';
-import { Session } from '@/modules/session/entities/session.entity';
-import { UserCode } from '@/modules/user-code/entities/user-code.entity';
+import { Session } from '@/modules/user/sub-modules/session/entities/session.entity';
+import { UserCode } from '@/modules/user/sub-modules/user-code/entities/user-code.entity';
 
 @Entity('users')
 export class User {
@@ -23,6 +31,12 @@ export class User {
 
   @Column('boolean', { name: 'email_verified', default: false })
   emailVerified!: boolean;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt!: Date;
 
   @OneToMany(() => Session, (x) => x.user, {
     cascade: true,

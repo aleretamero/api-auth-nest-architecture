@@ -1,4 +1,12 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { User } from '@/modules/user/entities/user.entity';
 
 @Entity('sessions')
@@ -17,6 +25,12 @@ export class Session {
 
   @Column({ name: 'refresh_token' })
   refreshToken!: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt!: Date;
 
   @ManyToOne(() => User, (x) => x.sessions, {
     onDelete: 'RESTRICT',
