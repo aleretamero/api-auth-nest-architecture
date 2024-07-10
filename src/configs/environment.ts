@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { z } from 'zod';
 
 const schema = z.object({
+  BASE_URL: z.string().url().optional(),
   NODE_ENV: z.enum(['development', 'production', 'test']),
   PORT: z.coerce.number(),
   FRONTEND_URL: z.string().url().optional(),

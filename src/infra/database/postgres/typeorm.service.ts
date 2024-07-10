@@ -3,6 +3,7 @@ import { UserCode } from '@/modules/user/sub-modules/user-code/entities/user-cod
 import { User } from '@/modules/user/entities/user.entity';
 import { Injectable, Scope } from '@nestjs/common';
 import { EntityManager, QueryRunner, Repository } from 'typeorm';
+import { PersonalData } from '@/modules/user/sub-modules/personal-data/entities/personal-data.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TypeormService {
@@ -42,5 +43,9 @@ export class TypeormService {
 
   get userCode(): Repository<UserCode> {
     return this.$entityManager.getRepository(UserCode);
+  }
+
+  get personalData(): Repository<PersonalData> {
+    return this.$entityManager.getRepository(PersonalData);
   }
 }

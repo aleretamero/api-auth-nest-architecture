@@ -26,10 +26,7 @@ export class SessionService {
     });
 
     if (sessionsCount > 0) {
-      await this.typeormService.session.delete({
-        userId: user.id,
-        deviceIdentifier,
-      });
+      await this.remove(user, deviceIdentifier);
     }
 
     const accessToken = await this.jwtService.sign({

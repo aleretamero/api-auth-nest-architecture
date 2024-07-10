@@ -17,6 +17,7 @@ async function bootstrap() {
   globalSetup(app);
 
   await app.listen(environment.PORT);
+
   new Logger('NestApplication').log(
     `Server running http://localhost:${environment.PORT}/api/health`,
   );

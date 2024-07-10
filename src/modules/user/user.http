@@ -1,0 +1,53 @@
+### Necessary install the extension REST Client in Visual Studio Code
+### Environment variables
+
+@baseUrl = {{$dotenv BASE_URL}}
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjA2MzAyNDYsImV4cCI6MTcyMDYzMTE0NiwiaXNzIjoiQUNDRVNTX1RPS0VOIiwic3ViIjoiMzk2NTZjYWYtZTkxZi00OWQ4LTk2MWMtZGNkZDhlNTYyOTMyIn0.GcfG-_QDePE4TuN0q0Ob26XyMs1k6WT5b9bRcQxhFho
+@deviceIdentifier = teste
+@fakerEmail = faker6@email.com
+@fakerId = c4947225-68fb-4569-8860-0792c4dce0ce
+
+### Test application health
+
+GET {{baseUrl}}/health
+
+### Create a new user
+
+POST {{baseUrl}}/users
+Authorization: Bearer {{accessToken}}
+Device-Identifier: {{deviceIdentifier}}
+Content-Type: application/json
+
+{
+  "email": "{{fakerEmail}}"
+}
+
+### Get all users
+
+GET {{baseUrl}}/users
+Authorization: Bearer {{accessToken}}
+Device-Identifier: {{deviceIdentifier}}
+
+### Get a user by id
+
+GET {{baseUrl}}/users/{{fakerId}}
+Authorization: Bearer {{accessToken}}
+Device-Identifier: {{deviceIdentifier}}
+
+
+### Update a user
+
+PATCH {{baseUrl}}/users/{{fakerId}}
+Authorization: Bearer {{accessToken}}
+Device-Identifier: {{deviceIdentifier}}
+Content-Type: application/json
+
+{
+  "email": "{{fakerEmail}}"
+}
+
+### Delete a user
+
+DELETE {{baseUrl}}/users/{{fakerId}}
+Authorization: Bearer {{accessToken}}
+Device-Identifier: {{deviceIdentifier}}

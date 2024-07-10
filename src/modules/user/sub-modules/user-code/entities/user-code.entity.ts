@@ -39,7 +39,7 @@ export class UserCode {
   updatedAt!: Date;
 
   @ManyToOne(() => User, (x) => x.userCodes, {
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
     deferrable: 'INITIALLY DEFERRED',
   })

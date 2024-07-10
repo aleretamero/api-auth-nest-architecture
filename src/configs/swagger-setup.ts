@@ -3,6 +3,8 @@ import { INestApplication, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export default (app: INestApplication) => {
+  if (environment.NODE_ENV !== 'development') return;
+
   const logger = new Logger('Swagger');
 
   const config = new DocumentBuilder()

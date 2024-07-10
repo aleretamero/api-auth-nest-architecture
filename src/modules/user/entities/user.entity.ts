@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryColumn,
   Unique,
   UpdateDateColumn,
@@ -47,6 +48,11 @@ export class User {
     cascade: true,
   })
   userCodes?: UserCode[];
+
+  @OneToOne(() => User, (x) => x.personalData, {
+    cascade: true,
+  })
+  personalData?: User;
 
   constructor(partialEntity: Partial<User>) {
     Object.assign(this, partialEntity);

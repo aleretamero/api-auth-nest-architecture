@@ -10,40 +10,45 @@ import { Job } from 'bull';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Logger } from '@nestjs/common';
 
-export namespace ForgotPasswordJob {
+export namespace CreateUserJob {
   export type Data = {
     email: string;
+    password: string;
     code: string;
   };
 }
 
-@Processor()
-export class AuthForgotPasswordJob {
-  private readonly logger = new Logger(AuthForgotPasswordJob.name);
+@Processor(QUEUE.CREATE_USER)
+export class CreateUserJob {
+  private readonly logger = new Logger(CreateUserJob.name);
 
   constructor(private readonly mailService: MailerService) {}
 
-  @Process(QUEUE.FORGOT_PASSWORD)
-  public async process({ data }: Job<ForgotPasswordJob.Data>): Promise<void> {
+  @Process(QUEUE.CREATE_USER)
+  public async process({ data }: Job<CreateUserJob.Data>): Promise<void> {
     await this.mailService.sendMail({
       to: data.email,
-      subject: 'Forgot Password',
-      text: 'Your verification code is: ' + data.code,
+      subject: 'Create User',
+      text:
+        'Your verification code is: ' +
+        data.code +
+        ' and your password is: ' +
+        data.password,
     });
   }
 
   @OnQueueActive()
-  public onActive(job: Job<ForgotPasswordJob.Data>): void {
+  public onActive(job: Job<CreateUserJob.Data>): void {
     this.logger.log(`Processing job ${job.id} of type ${job.name}`);
   }
 
   @OnQueueCompleted()
-  public onCompleted(job: Job<ForgotPasswordJob.Data>): void {
+  public onCompleted(job: Job<CreateUserJob.Data>): void {
     this.logger.log(`Completed job ${job.id} of type ${job.name}`);
   }
 
   @OnQueueFailed()
-  public onFailed(job: Job<ForgotPasswordJob.Data>, error: Error): void {
+  public onFailed(job: Job<CreateUserJob.Data>, error: Error): void {
     this.logger.error(
       `Failed job ${job.id} of type ${job.name}: ${error.message}`,
     );
