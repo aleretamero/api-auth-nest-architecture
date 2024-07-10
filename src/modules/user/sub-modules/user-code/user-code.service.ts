@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { UserCodeStatus } from '@/modules/user/sub-modules/user-code/enums/user-code-status.enum';
 import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
 import { User } from '@/modules/user/entities/user.entity';
-import { ClockUtil } from '@/common/shared/clock-util';
-import { Code } from '@/common/shared/code';
+import { ClockUtil } from '@/common/helpers/clock-util';
+import { Code } from '@/common/helpers/code';
 import { HashService } from '@/infra/hash/hash.service';
 
 @Injectable()

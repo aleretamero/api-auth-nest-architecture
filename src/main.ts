@@ -10,6 +10,8 @@ import { Logger } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const logger = new Logger('NestApplication');
+
   app.enableCors(corsOptions);
   app.setGlobalPrefix('api');
 
@@ -18,8 +20,6 @@ async function bootstrap() {
 
   await app.listen(environment.PORT);
 
-  new Logger('NestApplication').log(
-    `Server running http://localhost:${environment.PORT}/api/health`,
-  );
+  logger.log(`Server running http://localhost:${environment.PORT}/api/health`);
 }
 bootstrap();

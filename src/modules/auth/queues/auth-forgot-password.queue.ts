@@ -7,9 +7,6 @@ export class AuthForgotPasswordQueue {
   constructor(private readonly queueService: QueueService) {}
 
   public async add(data: ForgotPasswordJob.Data): Promise<void> {
-    await this.queueService.queueForgotPassword.add(
-      QUEUE.FORGOT_PASSWORD,
-      data,
-    );
+    await this.queueService.forgotPassword.add(QUEUE.FORGOT_PASSWORD, data);
   }
 }

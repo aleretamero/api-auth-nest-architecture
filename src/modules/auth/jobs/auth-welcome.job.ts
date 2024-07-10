@@ -7,7 +7,7 @@ import {
   Processor,
 } from '@nestjs/bull';
 import { Job } from 'bull';
-import { MailerService } from '@nestjs-modules/mailer';
+import { MailService } from '@/infra/mail/mail.service';
 import { Logger } from '@nestjs/common';
 
 export namespace WelcomeJob {
@@ -21,7 +21,7 @@ export namespace WelcomeJob {
 export class AuthWelcomeJob {
   private readonly logger = new Logger(AuthWelcomeJob.name);
 
-  constructor(private readonly mailService: MailerService) {}
+  constructor(private readonly mailService: MailService) {}
 
   @Process(QUEUE.WELCOME)
   public async process({ data }: Job<WelcomeJob.Data>): Promise<void> {

@@ -8,7 +8,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { ID } from '@/common/shared/id';
+import { ID } from '@/common/helpers/id';
 import { User } from '@/modules/user/entities/user.entity';
 
 @Entity('users/personal_data')
@@ -32,13 +32,14 @@ export class PersonalData {
   updatedAt!: Date;
 
   @Unique('PERSONAL_DATA_USER_UK', ['user_id'])
+  @Column({ name: 'user_id' })
+  userId!: string;
+
   @OneToOne(() => User, (x) => x.personalData, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
     deferrable: 'INITIALLY DEFERRED',
   })
-  userId!: string;
-
   @JoinColumn({
     foreignKeyConstraintName: 'PERSONAL_DATA_USER_FK',
     name: 'user_id',

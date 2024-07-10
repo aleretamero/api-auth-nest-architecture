@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePersonalDataDto } from './dto/create-personal-data.dto';
-import { UpdatePersonalDataDto } from './dto/update-personal-data.dto';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
-import { PersonalDataPresenter } from './presenters/personal-data.presenter';
+import { CreatePersonalDataDto } from '@/modules/user/sub-modules/personal-data/dto/create-personal-data.dto';
+import { UpdatePersonalDataDto } from '@/modules/user/sub-modules/personal-data/dto/update-personal-data.dto';
+import { PersonalDataPresenter } from '@/modules/user/sub-modules/personal-data/presenters/personal-data.presenter';
 
 @Injectable()
 export class PersonalDataService {

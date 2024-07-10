@@ -7,8 +7,8 @@ import {
   Processor,
 } from '@nestjs/bull';
 import { Job } from 'bull';
-import { MailerService } from '@nestjs-modules/mailer';
 import { Logger } from '@nestjs/common';
+import { MailService } from '@/infra/mail/mail.service';
 
 export namespace ForgotPasswordJob {
   export type Data = {
@@ -17,11 +17,11 @@ export namespace ForgotPasswordJob {
   };
 }
 
-@Processor()
+@Processor(QUEUE.FORGOT_PASSWORD)
 export class AuthForgotPasswordJob {
   private readonly logger = new Logger(AuthForgotPasswordJob.name);
 
-  constructor(private readonly mailService: MailerService) {}
+  constructor(private readonly mailService: MailService) {}
 
   @Process(QUEUE.FORGOT_PASSWORD)
   public async process({ data }: Job<ForgotPasswordJob.Data>): Promise<void> {

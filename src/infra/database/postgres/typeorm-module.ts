@@ -1,6 +1,6 @@
 import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from '@/infra/database/postgres/datasource';
+import { dataSourceOptions } from '@/infra/database/postgres/typeorm-datasource';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { TypeormInterceptor } from '@/infra/database/postgres/typeorm.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';

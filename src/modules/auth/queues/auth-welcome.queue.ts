@@ -7,6 +7,6 @@ export class AuthWelcomeQueue {
   constructor(private readonly queueService: QueueService) {}
 
   public async add(data: WelcomeJob.Data): Promise<void> {
-    await this.queueService.queueWelcome.add(QUEUE.WELCOME, data);
+    await this.queueService.welcome.add(QUEUE.WELCOME, data);
   }
 }

@@ -8,9 +8,10 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { ID } from '@/common/shared/id';
+import { ID } from '@/common/helpers/id';
 import { Session } from '@/modules/user/sub-modules/session/entities/session.entity';
 import { UserCode } from '@/modules/user/sub-modules/user-code/entities/user-code.entity';
+import { PersonalData } from '../sub-modules/personal-data/entities/personal-data.entity';
 
 @Entity('users')
 export class User {
@@ -49,10 +50,8 @@ export class User {
   })
   userCodes?: UserCode[];
 
-  @OneToOne(() => User, (x) => x.personalData, {
-    cascade: true,
-  })
-  personalData?: User;
+  @OneToOne(() => User)
+  personalData?: PersonalData | null;
 
   constructor(partialEntity: Partial<User>) {
     Object.assign(this, partialEntity);

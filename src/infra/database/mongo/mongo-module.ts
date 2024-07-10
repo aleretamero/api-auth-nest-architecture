@@ -5,7 +5,6 @@ import environment from '@/configs/environment';
 import models from '@/infra/database/mongo/models';
 
 @Module({
-  exports: [MongoService],
   imports: [
     MongooseModule.forRoot(environment.MONGO_URI, {
       dbName: environment.MONGO_DB,
@@ -17,5 +16,6 @@ import models from '@/infra/database/mongo/models';
     MongooseModule.forFeature(models),
   ],
   providers: [MongoService],
+  exports: [MongoService],
 })
 export class MongoModule {}

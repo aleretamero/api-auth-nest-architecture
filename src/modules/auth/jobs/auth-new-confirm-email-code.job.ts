@@ -7,7 +7,7 @@ import {
   Processor,
 } from '@nestjs/bull';
 import { Job } from 'bull';
-import { MailerService } from '@nestjs-modules/mailer';
+import { MailService } from '@/infra/mail/mail.service';
 import { Logger } from '@nestjs/common';
 
 export namespace AuthNewEmailConfirmationCodeJob {
@@ -21,7 +21,7 @@ export namespace AuthNewEmailConfirmationCodeJob {
 export class AuthNewConfirmEmailCodeJob {
   private readonly logger = new Logger(AuthNewConfirmEmailCodeJob.name);
 
-  constructor(private readonly mailService: MailerService) {}
+  constructor(private readonly mailService: MailService) {}
 
   @Process(QUEUE.NEW_CONFIRM_EMAIL_CODE)
   public async process({

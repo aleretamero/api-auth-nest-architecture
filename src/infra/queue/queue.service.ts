@@ -14,9 +14,9 @@ export type QUEUE = (typeof QUEUE)[keyof typeof QUEUE];
 @Injectable()
 export class QueueService {
   constructor(
-    @InjectQueue(QUEUE.WELCOME) public queueWelcome: Queue,
-    @InjectQueue(QUEUE.NEW_CONFIRM_EMAIL_CODE) public queueNewEmailConfirmationCode: Queue, // prettier-ignore
-    @InjectQueue(QUEUE.FORGOT_PASSWORD) public queueForgotPassword: Queue,
-    @InjectQueue(QUEUE.CREATE_USER) public queueCreateUser: Queue,
+    @InjectQueue(QUEUE.WELCOME) public welcome: Queue,
+    @InjectQueue(QUEUE.NEW_CONFIRM_EMAIL_CODE) public newEmailConfirmationCode: Queue, // prettier-ignore
+    @InjectQueue(QUEUE.FORGOT_PASSWORD) public forgotPassword: Queue,
+    @InjectQueue(QUEUE.CREATE_USER) public createUser: Queue,
   ) {}
 }

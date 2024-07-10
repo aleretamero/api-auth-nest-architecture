@@ -7,6 +7,6 @@ export class CreateUserQueue {
   constructor(private readonly queueService: QueueService) {}
 
   public async add(data: CreateUserJob.Data): Promise<void> {
-    await this.queueService.queueCreateUser.add(QUEUE.CREATE_USER, data);
+    await this.queueService.createUser.add(QUEUE.CREATE_USER, data);
   }
 }

@@ -1,6 +1,6 @@
 import { PersonalData } from '@/modules/user/sub-modules/personal-data/entities/personal-data.entity';
 
-export class PersonalDataPresenter implements Partial<PersonalData> {
+export class PersonalDataPresenter {
   id!: string;
   firstName!: string;
   lastName!: string;

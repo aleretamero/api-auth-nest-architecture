@@ -28,9 +28,8 @@ const schema = z.object({
     .refine((array) => z.array(z.string().url()).safeParse(array).success)
     .optional()
     .default(','),
-  // SUPABASE_URL: z.string().url(),
-  // SUPABASE_SERVICE_ROLE: z.string(),
-  // MAIL_SERVICE: z.string(),
+  SUPABASE_URL: z.string().url(),
+  SUPABASE_SERVICE_ROLE: z.string(),
   MAIL_HOST: z.string(),
   MAIL_PORT: z.coerce.number(),
   MAIL_USER: z.string(),

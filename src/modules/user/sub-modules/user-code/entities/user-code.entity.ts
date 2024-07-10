@@ -10,7 +10,7 @@ import {
 import { User } from '@/modules/user/entities/user.entity';
 import { UserCodeStatus } from '@/modules/user/sub-modules/user-code/enums/user-code-status.enum';
 import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
-import { ID } from '@/common/shared/id';
+import { ID } from '@/common/helpers/id';
 
 @Entity('user_codes')
 export class UserCode {

@@ -7,7 +7,7 @@ export class AuthNewConfirmEmailCodeQueue {
   constructor(private readonly queueService: QueueService) {}
 
   public async add(data: AuthNewEmailConfirmationCodeJob.Data): Promise<void> {
-    await this.queueService.queueNewEmailConfirmationCode.add(
+    await this.queueService.newEmailConfirmationCode.add(
       QUEUE.NEW_CONFIRM_EMAIL_CODE,
       data,
     );

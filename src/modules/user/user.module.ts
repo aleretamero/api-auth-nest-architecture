@@ -9,11 +9,13 @@ import { HashModule } from '@/infra/hash/hash.module';
 import { QueueModule } from '@/infra/queue/queue.module';
 import { PersonalDataModule } from '@/modules/user/sub-modules/personal-data/personal-data.module';
 import { UserService } from '@/modules/user/user.service';
+import { MailModule } from '@/infra/mail/mail.module';
 
 @Module({
   imports: [
     HashModule,
     QueueModule,
+    MailModule,
     SessionModule,
     UserCodeModule,
     PersonalDataModule,

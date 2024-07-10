@@ -7,7 +7,7 @@ import { HashService } from '@/infra/hash/hash.service';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
 import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
-import { Code } from '@/common/shared/code';
+import { Code } from '@/common/helpers/code';
 import { CreateUserQueue } from '@/modules/user/queues/create-user.queue';
 import { UserPresenter } from '@/modules/user/presenters/user.presenter';
 import { Not } from 'typeorm';

@@ -1,9 +1,11 @@
 import { User } from '@/modules/user/entities/user.entity';
+import { PersonalDataPresenter } from '../sub-modules/personal-data/presenters/personal-data.presenter';
 
 export class UserPresenter {
-  public id!: string;
-  public email!: string;
-  public avatarUrl?: string;
+  id!: string;
+  email!: string;
+  avatarUrl?: string;
+  personalData?: PersonalDataPresenter;
 
   constructor(data: Partial<UserPresenter>) {
     Object.assign(this, data);
@@ -18,6 +20,9 @@ export class UserPresenter {
       this.id = data.id;
       this.email = data.email;
       this.avatarUrl = data.avatarUrl ?? undefined;
+      this.personalData = data.personalData
+        ? new PersonalDataPresenter({}).present(data.personalData)
+        : undefined;
 
       return this;
     }
