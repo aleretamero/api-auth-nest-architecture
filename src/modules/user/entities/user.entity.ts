@@ -11,7 +11,7 @@ import {
 import { ID } from '@/common/helpers/id';
 import { Session } from '@/modules/user/sub-modules/session/entities/session.entity';
 import { UserCode } from '@/modules/user/sub-modules/user-code/entities/user-code.entity';
-import { PersonalData } from '../sub-modules/personal-data/entities/personal-data.entity';
+import { PersonalData } from '@/modules/user/sub-modules/personal-data/entities/personal-data.entity';
 
 @Entity('users')
 export class User {

@@ -1,13 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { CreatePersonalDataDto } from '@/modules/user/sub-modules/personal-data/dto/create-personal-data.dto';
 import { UpdatePersonalDataDto } from '@/modules/user/sub-modules/personal-data/dto/update-personal-data.dto';
 import { PersonalDataPresenter } from '@/modules/user/sub-modules/personal-data/presenters/personal-data.presenter';
+import { I18nService } from '@/infra/i18n/i18n.service';
 
 @Injectable()
 export class PersonalDataService {
   constructor(
     private readonly typeormService: TypeormService,
+    private readonly i18nService: I18nService,
     private readonly presenter: PersonalDataPresenter,
   ) {}
 
@@ -21,7 +27,9 @@ export class PersonalDataService {
       });
 
     if (userAlreadyHasPersonalData) {
-      throw new Error('User already has personal data');
+      throw new BadRequestException(
+        this.i18nService.t('user.personal_data.already_exists'),
+      );
     }
 
     const personalData = this.typeormService.personalData.create({
@@ -48,7 +56,9 @@ export class PersonalDataService {
     });
 
     if (!personalData) {
-      throw new Error('Personal data not found');
+      throw new NotFoundException(
+        this.i18nService.t('user.personal_data.not_found'),
+      );
     }
 
     return this.presenter.present(personalData);
@@ -63,7 +73,9 @@ export class PersonalDataService {
     });
 
     if (!personalData) {
-      throw new Error('Personal data not found');
+      throw new NotFoundException(
+        this.i18nService.t('user.personal_data.not_found'),
+      );
     }
 
     const updatedPersonalDatum = this.typeormService.personalData.merge(
@@ -82,7 +94,9 @@ export class PersonalDataService {
     });
 
     if (!personalData) {
-      throw new Error('Personal data not found');
+      throw new NotFoundException(
+        this.i18nService.t('user.personal_data.not_found'),
+      );
     }
 
     await this.typeormService.personalData.remove(personalData);

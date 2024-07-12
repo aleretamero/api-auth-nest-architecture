@@ -1,6 +1,6 @@
 import environment from '@/configs/environment';
 import { Injectable } from '@nestjs/common';
-import { StorageProvider } from './storage.provider';
+import { StorageProvider } from '@/infra/storage/storage.provider';
 
 namespace StorageService {
   export type Uploadable =

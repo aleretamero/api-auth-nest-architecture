@@ -7,14 +7,16 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@/infra/jwt/jwt.service';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
-// import { HashService } from '@/infra/hash/hash.service';
+import { I18nService } from '@/infra/i18n/i18n.service';
+import { HashService } from '@/infra/hash/hash.service';
 
 @Injectable()
 export class AuthRefreshGuard implements CanActivate {
   constructor(
     private readonly typeormService: TypeormService,
     private readonly jwtService: JwtService,
-    // private readonly hashService: HashService,
+    private readonly hashService: HashService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -23,11 +25,15 @@ export class AuthRefreshGuard implements CanActivate {
     const deviceIdentifier = this.extractDeviceIdentifierFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException('Token not found or invalid');
+      throw new UnauthorizedException(
+        this.i18nService.t('auth.token.not_found_or_invalid'),
+      );
     }
 
     if (!deviceIdentifier) {
-      throw new UnauthorizedException('Device identifier not found');
+      throw new UnauthorizedException(
+        this.i18nService.t('auth.device_identifier.not_found'),
+      );
     }
 
     try {
@@ -41,16 +47,17 @@ export class AuthRefreshGuard implements CanActivate {
       });
 
       if (!session || !session.user) {
-        throw new UnauthorizedException('Session not found');
+        throw new UnauthorizedException(
+          this.i18nService.t('user.session.not_found'),
+        );
       }
 
-      // TODO: Uncomment this code after implementing the hashService
-      // const isMatch = await this.hashService.compare(
-      //   token,
-      //   session.accessToken,
-      // );
+      const isMatch = await this.hashService.compare(
+        token,
+        session.accessToken,
+      );
 
-      // if (!isMatch) return false;
+      if (!isMatch) return false;
 
       request.user = session.user;
     } catch {

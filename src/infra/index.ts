@@ -6,6 +6,7 @@ import { HashModule } from '@/infra/hash/hash.module';
 import { QueueModule } from '@/infra/queue/queue.module';
 import { JwtModule } from '@/infra/jwt/jwt.module';
 import { CacheModule } from '@/infra/cache/cache.module';
+import { I18nModule } from '@/infra/i18n/i18n.module';
 
 export default [
   TypeormModule,
@@ -15,4 +16,5 @@ export default [
   QueueModule,
   JwtModule,
   HashModule,
+  I18nModule,
 ] as Type<any>[];

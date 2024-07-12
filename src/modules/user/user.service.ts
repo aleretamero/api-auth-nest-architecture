@@ -13,6 +13,7 @@ import { UserPresenter } from '@/modules/user/presenters/user.presenter';
 import { Not } from 'typeorm';
 import { CreateUserDto } from '@/modules/user/dtos/create-user.dto';
 import { UpdateUserDto } from '@/modules/user/dtos/update-user.dto';
+import { I18nService } from '@/infra/i18n/i18n.service';
 
 @Injectable()
 export class UserService {
@@ -20,6 +21,7 @@ export class UserService {
     private readonly typeormService: TypeormService,
     private readonly hashService: HashService,
     private readonly userCodeService: UserCodeService,
+    private readonly i18nService: I18nService,
     private readonly createUserQueue: CreateUserQueue,
     private readonly userPresenter: UserPresenter,
   ) {}
@@ -30,7 +32,9 @@ export class UserService {
     });
 
     if (userExists) {
-      throw new BadRequestException('Email already registered.');
+      throw new BadRequestException(
+        this.i18nService.t('user.email_already_exists'),
+      );
     }
 
     const password = Code.generate({
@@ -72,7 +76,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found.');
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
     return this.userPresenter.present(user);
@@ -87,7 +91,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found.');
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
     if (createUserDto.email && user.email !== createUserDto.email) {
@@ -97,7 +101,9 @@ export class UserService {
       });
 
       if (emailAlreadyExists) {
-        throw new BadRequestException('Email already registered.');
+        throw new BadRequestException(
+          this.i18nService.t('user.email_already_exists'),
+        );
       }
 
       user.email = createUserDto.email;
@@ -120,7 +126,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found.');
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
     await this.typeormService.user.remove(user);

@@ -3,8 +3,8 @@ import {
   ApiResponse as SwaggerApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiError } from './api-response-error.swagger';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { ApiError } from '@/common/swagger/api-response-error.swagger';
+import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
 
 type StatusCode = 400 | 401 | 403 | 404 | 500;
 type ApiResponseOptions = {

@@ -8,7 +8,9 @@ import globalSetup from '@/configs/global-setup';
 import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: false,
+  });
 
   const logger = new Logger('NestApplication');
 

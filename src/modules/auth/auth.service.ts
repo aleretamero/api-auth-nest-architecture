@@ -19,6 +19,7 @@ import { AuthForgotPasswordQueue } from '@/modules/auth/queues/auth-forgot-passw
 import { UserPresenter } from '@/modules/user/presenters/user.presenter';
 import { AuthResetPasswordDto } from '@/modules/auth/dtos/auth-reset-password.dto';
 import { AuthNewConfirmEmailCodeQueue } from '@/modules/auth/queues/auth-new-confirm-email-code.queue';
+import { I18nService } from '@/infra/i18n/i18n.service';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +31,7 @@ export class AuthService {
     private readonly authWelcomeQueue: AuthWelcomeQueue,
     private readonly authForgotPasswordQueue: AuthForgotPasswordQueue,
     private readonly authNewEmailConfirmationCodeQueue: AuthNewConfirmEmailCodeQueue,
+    private readonly i18nService: I18nService,
     private readonly userPresenter: UserPresenter,
   ) {}
 
@@ -42,7 +44,9 @@ export class AuthService {
     });
 
     if (userExists) {
-      throw new BadRequestException('Email already registered.');
+      throw new BadRequestException(
+        this.i18nService.t('user.email_already_exists'),
+      );
     }
 
     const passwordHash = await this.hashService.hash(authRegisterDto.password);
@@ -73,7 +77,9 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('Email or password is incorrect');
+      throw new BadRequestException(
+        this.i18nService.t('auth.email_or_password_invalid'),
+      );
     }
 
     const isMatch = await this.hashService.compare(
@@ -82,7 +88,9 @@ export class AuthService {
     );
 
     if (!isMatch) {
-      throw new BadRequestException('Email or password is incorrect');
+      throw new BadRequestException(
+        this.i18nService.t('auth.email_or_password_invalid'),
+      );
     }
 
     return await this.sessionService.create(user, deviceIdentifier);
@@ -107,7 +115,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
     const isValid = await this.userCodeService.confirm(
@@ -117,7 +125,9 @@ export class AuthService {
     );
 
     if (!isValid) {
-      throw new BadRequestException('Invalid code');
+      throw new BadRequestException(
+        this.i18nService.t('user.user_code.invalid'),
+      );
     }
 
     await this.typeormService.user.update(user.id, {
@@ -131,7 +141,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
     const code = await this.userCodeService.create(
@@ -154,7 +164,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
     const isValid = await this.userCodeService.confirm(
@@ -164,7 +174,9 @@ export class AuthService {
     );
 
     if (!isValid) {
-      throw new BadRequestException('Invalid code');
+      throw new BadRequestException(
+        this.i18nService.t('user.user_code.invalid'),
+      );
     }
 
     const passwordHash = await this.hashService.hash(
@@ -184,7 +196,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
     const code = await this.userCodeService.create(
@@ -208,7 +220,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
     const isValid = await this.userCodeService.isValid(
@@ -218,7 +230,9 @@ export class AuthService {
     );
 
     if (!isValid) {
-      throw new BadRequestException('Invalid code');
+      throw new BadRequestException(
+        this.i18nService.t('user.user_code.invalid'),
+      );
     }
   }
 

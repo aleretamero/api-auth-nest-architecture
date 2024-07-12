@@ -1,5 +1,5 @@
 import { User } from '@/modules/user/entities/user.entity';
-import { PersonalDataPresenter } from '../sub-modules/personal-data/presenters/personal-data.presenter';
+import { PersonalDataPresenter } from '@/modules/user/sub-modules/personal-data/presenters/personal-data.presenter';
 
 export class UserPresenter {
   id!: string;
