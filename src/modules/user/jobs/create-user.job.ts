@@ -1,4 +1,4 @@
-import { QUEUE } from '@/infra/queue/queue.service';
+import { JOB, QUEUE } from '@/infra/queue/queue.service';
 import {
   OnQueueActive,
   OnQueueCompleted,
@@ -24,7 +24,7 @@ export class CreateUserJob {
 
   constructor(private readonly mailService: MailService) {}
 
-  @Process(QUEUE.CREATE_USER)
+  @Process(JOB.CREATE_USER)
   public async process({ data }: Job<CreateUserJob.Data>): Promise<void> {
     await this.mailService.sendMail({
       to: data.email,

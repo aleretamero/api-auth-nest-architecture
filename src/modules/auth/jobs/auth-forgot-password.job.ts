@@ -1,4 +1,4 @@
-import { QUEUE } from '@/infra/queue/queue.service';
+import { JOB, QUEUE } from '@/infra/queue/queue.service';
 import {
   OnQueueActive,
   OnQueueCompleted,
@@ -23,7 +23,7 @@ export class AuthForgotPasswordJob {
 
   constructor(private readonly mailService: MailService) {}
 
-  @Process(QUEUE.FORGOT_PASSWORD)
+  @Process(JOB.FORGOT_PASSWORD)
   public async process({ data }: Job<ForgotPasswordJob.Data>): Promise<void> {
     await this.mailService.sendMail({
       to: data.email,

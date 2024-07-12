@@ -1,4 +1,4 @@
-import { QUEUE } from '@/infra/queue/queue.service';
+import { JOB, QUEUE } from '@/infra/queue/queue.service';
 import {
   OnQueueActive,
   OnQueueCompleted,
@@ -23,7 +23,7 @@ export class AuthWelcomeJob {
 
   constructor(private readonly mailService: MailService) {}
 
-  @Process(QUEUE.WELCOME)
+  @Process(JOB.WELCOME)
   public async process({ data }: Job<WelcomeJob.Data>): Promise<void> {
     await this.mailService.sendMail({
       to: data.email,

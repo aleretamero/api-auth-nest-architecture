@@ -1,4 +1,4 @@
-import { QUEUE } from '@/infra/queue/queue.service';
+import { JOB, QUEUE } from '@/infra/queue/queue.service';
 import {
   OnQueueActive,
   OnQueueCompleted,
@@ -23,7 +23,7 @@ export class AuthNewConfirmEmailCodeJob {
 
   constructor(private readonly mailService: MailService) {}
 
-  @Process(QUEUE.NEW_CONFIRM_EMAIL_CODE)
+  @Process(JOB.NEW_CONFIRM_EMAIL_CODE)
   public async process({
     data,
   }: Job<AuthNewEmailConfirmationCodeJob.Data>): Promise<void> {

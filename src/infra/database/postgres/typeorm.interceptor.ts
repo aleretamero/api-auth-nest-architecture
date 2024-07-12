@@ -22,17 +22,17 @@ export class TypeormInterceptor implements NestInterceptor {
     return next.handle().pipe(
       // concatMap gets called when route handler completes successfully
       concatMap(async (data) => {
-        await queryRunner.commitTransaction();
+        await queryRunner?.commitTransaction();
         return data;
       }),
       // catchError gets called when route handler throws an exception
       catchError(async (e) => {
-        await queryRunner.rollbackTransaction();
+        await queryRunner?.rollbackTransaction();
         throw e;
       }),
       // always executed, even if catchError method throws an exception
       finalize(async () => {
-        await queryRunner.release();
+        await queryRunner?.release();
       }),
     );
   }

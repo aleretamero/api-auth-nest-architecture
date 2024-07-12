@@ -11,6 +11,15 @@ export const QUEUE = {
 
 export type QUEUE = (typeof QUEUE)[keyof typeof QUEUE];
 
+export const JOB = {
+  WELCOME: 'WELCOME',
+  NEW_CONFIRM_EMAIL_CODE: 'NEW_CONFIRM_EMAIL_CODE',
+  FORGOT_PASSWORD: 'FORGOT_PASSWORD',
+  CREATE_USER: 'CREATE_USER',
+};
+
+export type JOB = (typeof JOB)[keyof typeof JOB];
+
 @Injectable()
 export class QueueService {
   constructor(
