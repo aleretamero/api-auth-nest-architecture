@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { LogErrorService } from './log-error.service';
+import { LogErrorService } from '@/infra/logging/log-error/log-error.service';
 
 @Injectable()
 export class LogErrorInterceptor implements NestInterceptor {

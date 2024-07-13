@@ -1,8 +1,7 @@
-import * as path from 'node:path';
 import environment from '@/configs/environment';
 import { Injectable } from '@nestjs/common';
 import { SupabaseProvider } from '@/infra/storage/supabase/supabase.provider';
-import { FileSystem } from '@/common/helpers/file-system';
+import { LocalStorageService } from '@/infra/storage/local-storage/local-storage.service';
 
 export type Uploadable =
   | {
@@ -21,7 +20,10 @@ export type Output = {
 
 @Injectable()
 export class SupabaseService {
-  constructor(private readonly client: SupabaseProvider) {}
+  constructor(
+    private readonly client: SupabaseProvider,
+    private readonly localStorageService: LocalStorageService,
+  ) {}
 
   async uploadFile(uploadable: Uploadable, file: File): Promise<Output> {
     const bucket = await this.getOrCreateBucket(uploadable);
@@ -42,32 +44,27 @@ export class SupabaseService {
     return { path: data.path, publicUrl };
   }
 
-  async uploadFileFromPath(
+  async uploadFileFromLocalStorage(
     uploadable: Uploadable,
     pathName: string,
   ): Promise<Output> {
-    const filePath = path.resolve(__dirname, '../../../uploads', pathName);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const buffer = FileSystem.getStream(filePath);
-    // const bucket = await this.getOrCreateBucket(uploadable);
+    const bucket = await this.getOrCreateBucket(uploadable);
+    const buffer = this.localStorageService.getStream(pathName);
 
-    console.log(filePath);
+    const { data, error } = await this.client.storage
+      .from(bucket)
+      .upload(pathName, buffer, {
+        upsert: true,
+      });
 
-    // const { data, error } = await this.client.storage
-    //   .from(bucket)
-    //   .upload(pathName, buffer, {
-    //     upsert: true,
-    //   });
+    if (error) {
+      console.error('Error uploading file', error);
+      throw new Error('Error uploading file');
+    }
 
-    // if (error) {
-    //   console.error('Error uploading file', error);
-    //   throw new Error('Error uploading file');
-    // }
+    const publicUrl = await this.getPublicUrl(uploadable, data.path);
 
-    // const publicUrl = await this.getPublicUrl(uploadable, data.path);
-
-    // return { path: data.path, publicUrl };
-    return { path: pathName, publicUrl: '' };
+    return { path: data.path, publicUrl };
   }
 
   async deleteFile(uploadable: Uploadable, path: string): Promise<void> {

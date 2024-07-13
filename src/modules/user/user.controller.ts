@@ -50,20 +50,41 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @Patch('me')
+  @UseInterceptorFile('file')
+  @ApiDocs({ tags: 'users', response: [400, 401, 404] })
+  async updateMe(
+    @CurrentUser() currentUser: User,
+    @Body() body: UpdateUserDto,
+    @UploadedFile(new ParseFilePipe({ isRequired: false })) file?: File,
+  ): Promise<UserDto> {
+    return this.userService.updateMe(currentUser, body, file?.filename);
+  }
+
   @Patch(':id')
+  @Roles(Role.ADMIN)
   @UseInterceptorFile('file')
   @ApiDocs({ tags: 'users', response: [400, 401, 404] })
   async update(
+    @CurrentUser() currentUser: User,
     @Param('id') id: string,
     @Body() body: UpdateUserDto,
     @UploadedFile(new ParseFilePipe({ isRequired: false })) file?: File,
   ): Promise<UserDto> {
-    return this.userService.update(id, body, file?.filename);
+    return this.userService.update(currentUser, id, body, file?.filename);
+  }
+
+  @Delete('me')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiDocs({ tags: 'users', response: [401] })
+  async deleteMe(@CurrentUser() currentUser: User): Promise<void> {
+    return this.userService.deleteMe(currentUser);
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiDocs({ tags: 'users', response: [401, 404] })
+  @ApiDocs({ tags: 'users', response: [401, 403, 404] })
   async delete(
     @CurrentUser() currentUser: User,
     @Param('id') id: string,

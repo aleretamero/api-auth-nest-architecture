@@ -24,8 +24,8 @@ export class FileSystem {
     }
   }
 
-  static getStream(filePath: string): fs.ReadStream {
-    return fs.createReadStream(filePath);
+  static getStream(filePath: string): Buffer {
+    return fs.readFileSync(filePath);
   }
 
   static deleteFile(filePath: string): void {

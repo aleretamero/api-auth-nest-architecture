@@ -10,16 +10,14 @@ import { SessionService } from '@/modules/user/sub-modules/session/session.servi
 import { User } from '@/modules/user/entities/user.entity';
 import { AuthRegisterDto } from '@/modules/auth/dtos/auth-register.dto';
 import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
-import { AuthWelcomeQueue } from '@/modules/auth/queues/auth-welcome.queue';
 import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
 import { AuthConfirmEmailDto } from '@/modules/auth/dtos/auth-confirm-email.dto';
 import { AuthConfirmForgotPasswordDto } from '@/modules/auth/dtos/auth-confirm-forgot-password.dto';
-import { AuthForgotPasswordQueue } from '@/modules/auth/queues/auth-forgot-password.queue';
 import { AuthResetPasswordDto } from '@/modules/auth/dtos/auth-reset-password.dto';
-import { AuthNewConfirmEmailCodeQueue } from '@/modules/auth/queues/auth-new-confirm-email-code.queue';
 import { I18nService } from '@/infra/i18n/i18n.service';
 import { SessionDto } from '@/modules/user/sub-modules/session/dtos/session.dto';
 import { UserDto } from '@/modules/user/dtos/user.dto';
+import { QueueService } from '@/infra/queue/queue.service';
 
 @Injectable()
 export class AuthService {
@@ -28,9 +26,7 @@ export class AuthService {
     private readonly hashService: HashService,
     private readonly sessionService: SessionService,
     private readonly userCodeService: UserCodeService,
-    private readonly authWelcomeQueue: AuthWelcomeQueue,
-    private readonly authForgotPasswordQueue: AuthForgotPasswordQueue,
-    private readonly authNewEmailConfirmationCodeQueue: AuthNewConfirmEmailCodeQueue,
+    private readonly queueService: QueueService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -60,7 +56,7 @@ export class AuthService {
       UserCodeType.EMAIL_VERIFICATION,
     );
 
-    await this.authWelcomeQueue.add({ code, email: user.email });
+    await this.queueService.welcome.add({ code, email: user.email });
 
     await this.typeormService.user.save(user);
 
@@ -145,7 +141,7 @@ export class AuthService {
       UserCodeType.EMAIL_VERIFICATION,
     );
 
-    await this.authNewEmailConfirmationCodeQueue.add({
+    await this.queueService.newEmailConfirmationCode.add({
       email: user.email,
       code,
     });
@@ -200,7 +196,7 @@ export class AuthService {
       UserCodeType.FORGOT_PASSWORD,
     );
 
-    await this.authForgotPasswordQueue.add({
+    await this.queueService.forgotPassword.add({
       email: user.email,
       code,
     });

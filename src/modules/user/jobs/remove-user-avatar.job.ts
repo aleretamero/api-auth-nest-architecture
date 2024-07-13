@@ -1,4 +1,5 @@
-import { JOB, QUEUE } from '@/infra/queue/queue.service';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { QUEUE } from '@/infra/queue/queue.service';
 import {
   OnQueueActive,
   OnQueueCompleted,
@@ -8,13 +9,11 @@ import {
 } from '@nestjs/bull';
 import { Job } from 'bull';
 import { Logger } from '@nestjs/common';
-import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { SupabaseService } from '@/infra/storage/supabase/supabase.service';
-import { RemoveLocalUserAvatarQueue } from '@/modules/user/queues/remove-local-user-avatar.queue';
 
 export namespace RemoveUserAvatarJob {
   export type Data = {
-    userId: string;
+    avatarPath: string;
   };
 }
 
@@ -23,33 +22,28 @@ export class RemoveUserAvatarJob {
   private readonly logger = new Logger(RemoveUserAvatarJob.name);
 
   constructor(
-    private readonly typeormService: TypeormService,
+    // private readonly typeormService: TypeormService,
     private readonly supabaseService: SupabaseService,
-    private readonly removeLocalUserAvatarQueue: RemoveLocalUserAvatarQueue,
   ) {}
 
-  @Process(JOB.REMOVE_USER_AVATAR)
+  @Process(QUEUE.REMOVE_USER_AVATAR)
   public async process({
     moveToCompleted,
     data,
   }: Job<RemoveUserAvatarJob.Data>): Promise<void> {
-    let user = await this.typeormService.user.findOne({
-      where: { id: data.userId },
-    });
-
-    if (!user || !user.avatarPath) {
-      moveToCompleted();
-      return;
-    }
-
-    await this.supabaseService.deleteFile(user, user.avatarPath);
-
-    user = this.typeormService.user.merge(user, {
-      avatarUrl: null,
-      avatarPath: null,
-    });
-
-    await this.typeormService.user.save(user);
+    // let user = await this.typeormService.user.findOne({
+    //   where: { id: data.avatarPath },
+    // });
+    // if (!user || !user.avatarPath) {
+    //   moveToCompleted();
+    //   return;
+    // }
+    // await this.supabaseService.deleteFile(user, user.avatarPath);
+    // user = this.typeormService.user.merge(user, {
+    //   avatarUrl: null,
+    //   avatarPath: null,
+    // });
+    // await this.typeormService.user.save(user);
   }
 
   @OnQueueActive()

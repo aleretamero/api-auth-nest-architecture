@@ -1,4 +1,4 @@
-import { JOB, QUEUE } from '@/infra/queue/queue.service';
+import { QUEUE } from '@/infra/queue/queue.service';
 import {
   OnQueueActive,
   OnQueueCompleted,
@@ -9,8 +9,6 @@ import {
 import { Job } from 'bull';
 import { Logger } from '@nestjs/common';
 import { MailService } from '@/infra/mail/mail.service';
-import { UserCodeService } from '../sub-modules/user-code/user-code.service';
-import { UserCodeType } from '../sub-modules/user-code/enums/user-code-type.enum';
 
 export namespace CreateUserJob {
   export type Data = {
@@ -26,22 +24,22 @@ export class CreateUserJob {
 
   constructor(
     private readonly mailService: MailService,
-    private readonly userCodeService: UserCodeService,
+    // private readonly userCodeService: UserCodeService,
   ) {}
 
-  @Process(JOB.CREATE_USER)
+  @Process(QUEUE.CREATE_USER)
   public async process({ data }: Job<CreateUserJob.Data>): Promise<void> {
-    const code = await this.userCodeService.create(
-      data.userId,
-      UserCodeType.EMAIL_VERIFICATION,
-    );
+    // const code = await this.userCodeService.create(
+    //   data.userId,
+    //   UserCodeType.EMAIL_VERIFICATION,
+    // );
 
     await this.mailService.sendMail({
       to: data.email,
       subject: 'Create User',
       text:
         'Your verification code is: ' +
-        code +
+        'code' +
         ' and your password is: ' +
         data.password,
     });

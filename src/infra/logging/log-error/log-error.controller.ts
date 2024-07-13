@@ -1,9 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { LogErrorService } from './log-error.service';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Role } from '@/modules/user/enums/role.enum';
 import { ApiExcludeController } from '@nestjs/swagger';
-import { GetErrosLogQuery } from './queries/get-errors-log.query';
+import { LogErrorService } from '@/infra/logging/log-error/log-error.service';
+import { GetErrosLogQuery } from '@/infra/logging/log-error/queries/get-errors-log.query';
 
 @ApiExcludeController()
 @Controller('log-errors')

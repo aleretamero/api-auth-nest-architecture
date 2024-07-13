@@ -1,5 +1,4 @@
 import * as path from 'node:path';
-import * as fs from 'node:fs';
 import { FileSystem } from '@/common/helpers/file-system';
 import environment from '@/configs/environment';
 import { Injectable } from '@nestjs/common';
@@ -10,7 +9,7 @@ export class LocalStorageService {
     return `${environment.BASE_URL}/uploads/${fileName}`;
   }
 
-  getStream(fileName: string): fs.ReadStream {
+  getStream(fileName: string): Buffer {
     const filePath = path.resolve(__dirname, '../../../../uploads', fileName);
 
     return FileSystem.getStream(filePath);

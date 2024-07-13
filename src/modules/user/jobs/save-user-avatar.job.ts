@@ -1,4 +1,4 @@
-import { JOB, QUEUE } from '@/infra/queue/queue.service';
+import { QUEUE } from '@/infra/queue/queue.service';
 import {
   OnQueueActive,
   OnQueueCompleted,
@@ -8,12 +8,13 @@ import {
 } from '@nestjs/bull';
 import { Job } from 'bull';
 import { Logger } from '@nestjs/common';
-import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { SupabaseService } from '@/infra/storage/supabase/supabase.service';
+import { User } from '../entities/user.entity';
+import { DataSource } from 'typeorm';
 
 export namespace SaveUserAvatarJob {
   export type Data = {
-    userId: string;
+    user: User;
   };
 }
 
@@ -22,35 +23,42 @@ export class SaveUserAvatarJob {
   private readonly logger = new Logger(SaveUserAvatarJob.name);
 
   constructor(
-    private readonly typeormService: TypeormService,
     private readonly supabaseService: SupabaseService,
+    private readonly dataSource: DataSource,
   ) {}
 
-  @Process(JOB.SAVE_USER_AVATAR)
-  public async process({
-    moveToCompleted,
-    data,
-  }: Job<SaveUserAvatarJob.Data>): Promise<void> {
-    let user = await this.typeormService.user.findOne({
-      where: { id: data.userId },
-    });
-
-    if (!user || !user.avatarPath) {
-      moveToCompleted();
+  @Process(QUEUE.SAVE_USER_AVATAR)
+  public async process({ data }: Job<SaveUserAvatarJob.Data>): Promise<void> {
+    if (!data.user?.avatarPath) {
       return;
     }
 
-    const { path, publicUrl } = await this.supabaseService.uploadFileFromPath(
-      user,
-      user.avatarPath,
-    );
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    user = this.typeormService.user.merge(user, {
-      avatarUrl: publicUrl,
-      avatarPath: path,
-    });
+    try {
+      const { path, publicUrl } =
+        await this.supabaseService.uploadFileFromLocalStorage(
+          'USER',
+          data.user.avatarPath,
+        );
 
-    // await this.typeormService.user.save(user);
+      const userRepository = queryRunner.manager.getRepository(User);
+
+      data.user = userRepository.merge(data.user, {
+        avatarUrl: publicUrl,
+        avatarPath: path,
+      });
+
+      await userRepository.save(data.user);
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   @OnQueueActive()
