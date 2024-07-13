@@ -10,6 +10,8 @@ import { PersonalDataModule } from '@/modules/user/sub-modules/personal-data/per
 import { UserService } from '@/modules/user/user.service';
 import { MailModule } from '@/infra/mail/mail.module';
 import { StorageModule } from '@/infra/storage/storage.module';
+import { SaveUserAvatarQueue } from '@/modules/user/queues/save-user-avatar.queue';
+import { SaveUserAvatarJob } from '@/modules/user/jobs/save-user-avatar.job';
 
 @Module({
   imports: [
@@ -22,6 +24,12 @@ import { StorageModule } from '@/infra/storage/storage.module';
     PersonalDataModule,
   ],
   controllers: [UserController],
-  providers: [UserService, CreateUserQueue, CreateUserJob],
+  providers: [
+    UserService,
+    CreateUserQueue,
+    SaveUserAvatarQueue,
+    CreateUserJob,
+    SaveUserAvatarJob,
+  ],
 })
 export class UserModule {}

@@ -3,7 +3,7 @@ import * as fs from 'node:fs';
 import * as multer from 'multer';
 import { BadRequestException } from '@nestjs/common';
 import { Code } from '@/common/helpers/code';
-// import { ClockUtil } from '@/common/helpers/clock-util';
+import { ClockUtil } from '@/common/helpers/clock-util';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
 export const multerOptions: MulterOptions = {
@@ -26,9 +26,11 @@ export const multerOptions: MulterOptions = {
       file: Express.Multer.File,
       callback: (error: Error | null, filename: string) => void,
     ) => {
-      // const dateString = ClockUtil.format('');
+      const timestamp = ClockUtil.getTimestamp();
       const codeString = Code.generate(10);
-      callback(null, `${codeString}.${file.originalname?.split('.').pop()}`);
+      const fileName = `${timestamp}_${codeString}.${file.originalname?.split('.').pop()}`;
+
+      callback(null, fileName);
     },
   }),
 
