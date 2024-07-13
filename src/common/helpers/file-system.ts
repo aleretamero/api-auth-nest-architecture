@@ -24,7 +24,11 @@ export class FileSystem {
     }
   }
 
-  static async deleteFile(filePath?: string) {
+  static getStream(filePath: string): fs.ReadStream {
+    return fs.createReadStream(filePath);
+  }
+
+  static deleteFile(filePath: string): void {
     if (filePath) {
       fs.unlinkSync(filePath);
       console.log(`${filePath} was deleted'`);

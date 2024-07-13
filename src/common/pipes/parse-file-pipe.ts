@@ -8,15 +8,15 @@ type ParseFilePipeOptions = {
 
 @Injectable()
 export class ParseFilePipe implements PipeTransform {
-  private ONE_MEGA_BYTE = 1000;
+  private ONE_MEGA_BYTE = 100000;
   private acceptMimeTypes: RegExp;
   private isRequired: boolean;
   private maxSizeInMegaByte: number;
 
   constructor(options?: ParseFilePipeOptions) {
-    this.acceptMimeTypes = options?.acceptMimeTypes ?? /\.(jp.*|png|webp|pdf)$/;
+    this.acceptMimeTypes = options?.acceptMimeTypes ?? /(jp.*|png|webp|pdf)$/;
     this.isRequired = options?.isRequired ?? true;
-    this.maxSizeInMegaByte = options?.maxSizeInMegaByte ?? 15;
+    this.maxSizeInMegaByte = options?.maxSizeInMegaByte ?? 25;
   }
 
   transform(value: any) {

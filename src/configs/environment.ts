@@ -22,12 +22,11 @@ const schema = z.object({
   MONGO_DB: z.string(),
   MONGO_URI: z.string().url(),
   JWT_SECRET: z.string(),
-  CLIENTS_URL: z
+  CORS_WHITE_LIST: z
     .string()
     .transform((value) => value.split(/[,]/).filter(Boolean))
     .refine((array) => z.array(z.string().url()).safeParse(array).success)
-    .optional()
-    .default(','),
+    .optional(),
   SUPABASE_URL: z.string().url(),
   SUPABASE_SERVICE_ROLE: z.string(),
   MAIL_HOST: z.string(),

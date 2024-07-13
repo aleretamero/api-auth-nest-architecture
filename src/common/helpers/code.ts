@@ -7,7 +7,7 @@ export namespace Code {
     length: number;
     hasUppercase: boolean;
     hasLowercase: boolean;
-    numbers: boolean;
+    hasNumbers: boolean;
     hasSpecialCharacters: boolean;
   };
 
@@ -17,7 +17,7 @@ export namespace Code {
 export abstract class Code {
   private static readonly DEFAULT_OPTIONS: Code.GenerateOptions = {
     length: 4,
-    numbers: true,
+    hasNumbers: true,
     hasUppercase: false,
     hasLowercase: false,
     hasSpecialCharacters: false,
@@ -46,7 +46,7 @@ export abstract class Code {
     let code = '';
 
     for (let i = 0; i < opts.length; i++) {
-      if (opts.numbers) {
+      if (opts.hasNumbers) {
         code += Random.generateNumberCharacter();
         length--;
 

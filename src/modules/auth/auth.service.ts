@@ -56,7 +56,7 @@ export class AuthService {
     });
 
     const code = await this.userCodeService.create(
-      user,
+      user.id,
       UserCodeType.EMAIL_VERIFICATION,
     );
 
@@ -115,7 +115,7 @@ export class AuthService {
     }
 
     const isValid = await this.userCodeService.confirm(
-      user,
+      user.id,
       UserCodeType.EMAIL_VERIFICATION,
       authConfirmEmailDto.code,
     );
@@ -141,7 +141,7 @@ export class AuthService {
     }
 
     const code = await this.userCodeService.create(
-      user,
+      user.id,
       UserCodeType.EMAIL_VERIFICATION,
     );
 
@@ -164,7 +164,7 @@ export class AuthService {
     }
 
     const isValid = await this.userCodeService.confirm(
-      user,
+      user.id,
       UserCodeType.FORGOT_PASSWORD,
       authResetPasswordDto.code,
     );
@@ -196,7 +196,7 @@ export class AuthService {
     }
 
     const code = await this.userCodeService.create(
-      user,
+      user.id,
       UserCodeType.FORGOT_PASSWORD,
     );
 
@@ -209,22 +209,18 @@ export class AuthService {
   async verifyForgotPasswordCode(
     authConfirmForgotPasswordDto: AuthConfirmForgotPasswordDto,
   ): Promise<void> {
-    console.log(authConfirmForgotPasswordDto);
-
     const user = await this.typeormService.user.findOne({
       where: {
         email: authConfirmForgotPasswordDto.email,
       },
     });
 
-    console.log(user);
-
     if (!user) {
       throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
     const isValid = await this.userCodeService.isValid(
-      user,
+      user.id,
       UserCodeType.FORGOT_PASSWORD,
       authConfirmForgotPasswordDto.code,
     );

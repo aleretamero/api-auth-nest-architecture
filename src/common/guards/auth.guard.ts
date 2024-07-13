@@ -49,8 +49,12 @@ export class AuthGuard implements CanActivate {
     try {
       const payload = await this.jwtService.verify(token);
 
+      if (payload.iss !== 'ACCESS_TOKEN') {
+        throw new UnauthorizedException();
+      }
+
       const session = await this.datasource.getRepository('sessions').findOne({
-        where: { deviceIdentifier, userId: payload.subject },
+        where: { deviceIdentifier, userId: payload.sub },
         relations: {
           user: true,
         },
@@ -67,11 +71,11 @@ export class AuthGuard implements CanActivate {
         session.accessToken,
       );
 
-      if (!isMatch) return false;
+      if (!isMatch) throw new UnauthorizedException();
 
       request.user = session.user;
     } catch {
-      return false;
+      throw new UnauthorizedException();
     }
 
     return true;

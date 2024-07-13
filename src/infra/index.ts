@@ -9,6 +9,7 @@ import { CacheModule } from '@/infra/cache/cache.module';
 import { I18nModule } from '@/infra/i18n/i18n.module';
 import { StorageModule } from '@/infra/storage/storage.module';
 import { RateLimitingModule } from '@/infra/rate-limiting/rate-limiting.module';
+import { LoggingModule } from '@/infra/logging/logging.module';
 
 export default [
   TypeormModule,
@@ -17,6 +18,7 @@ export default [
   StorageModule,
   MailModule,
   QueueModule,
+  LoggingModule,
   JwtModule,
   HashModule,
   I18nModule,

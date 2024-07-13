@@ -3,9 +3,10 @@ import { JwtService as NestJwtService } from '@nestjs/jwt';
 
 namespace JwtService {
   export type Options<T extends object | Buffer> = {
-    expiresIn?: string | number;
-    issuer?: string;
-    subject?: string;
+    iat?: number;
+    exp?: string | number;
+    iss?: string;
+    sub?: string;
   } & { payload?: T };
 }
 
@@ -14,11 +15,13 @@ export class JwtService {
   constructor(private readonly jwtService: NestJwtService) {}
 
   async sign<T extends object | Buffer>(
-    options: JwtService.Options<T> = {},
+    options: Omit<JwtService.Options<T>, 'iat'> = {},
   ): Promise<string> {
-    const { payload, ...rest } = options;
-
-    return this.jwtService.sign(payload ?? {}, rest);
+    return this.jwtService.sign(options.payload ?? {}, {
+      issuer: options.iss,
+      subject: options.sub,
+      expiresIn: options.exp,
+    });
   }
 
   async verify<T extends object>(

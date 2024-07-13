@@ -4,7 +4,6 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@/infra/jwt/jwt.service';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
@@ -40,15 +39,19 @@ export class AuthRefreshGuard implements CanActivate {
     try {
       const payload = await this.jwtService.verify(token);
 
+      if (payload.iss !== 'REFRESH_TOKEN') {
+        throw new BadRequestException();
+      }
+
       const session = await this.typeormService.session.findOne({
-        where: { deviceIdentifier, userId: payload.subject },
+        where: { deviceIdentifier, userId: payload.sub },
         relations: {
           user: true,
         },
       });
 
       if (!session || !session.user) {
-        throw new UnauthorizedException(
+        throw new BadRequestException(
           this.i18nService.t('user.session.not_found'),
         );
       }
@@ -58,7 +61,7 @@ export class AuthRefreshGuard implements CanActivate {
         session.refreshToken,
       );
 
-      if (!isMatch) return false;
+      if (!isMatch) throw new BadRequestException();
 
       request.user = session.user;
     } catch {
@@ -79,7 +82,7 @@ export class AuthRefreshGuard implements CanActivate {
   private extractDeviceIdentifierFromHeader(
     request: Request,
   ): string | undefined {
-    return request.headers['device-identifier'] === 'string'
+    return typeof request.headers['device-identifier'] === 'string'
       ? request.headers['device-identifier']
       : undefined;
   }

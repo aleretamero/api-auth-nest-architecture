@@ -60,7 +60,8 @@ export abstract class ClockUtil {
     return timestamp;
   }
 
-  static format(format: string): string {
-    return new Date(format).toISOString();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static format(format?: string): string {
+    return new Date().toISOString();
   }
 }

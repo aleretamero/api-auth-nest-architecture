@@ -31,6 +31,7 @@ export function ApiDocs(options?: ApiDocsOptions) {
   // Default decorators
   decorators.push(
     ApiHeader({ name: 'Accept-Language', required: false, enum: ['en'] }),
+    ApiHeader({ name: 'Device-Identifier', required: true }),
   );
 
   // Custom decorators

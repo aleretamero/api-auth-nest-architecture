@@ -12,7 +12,7 @@ import { DeviceIdentifier } from '@/common/decorators/device-identifier.decorato
 import { ParseEmailPipe } from '@/common/pipes/parse-email.pipe';
 import { User } from '@/modules/user/entities/user.entity';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { IsPublic } from '@/common/decorators/public.decorator';
+import { IsPublic } from '@/common/decorators/is-public.decorator';
 import { AuthRefreshGuard } from '@/common/guards/auth-refresh.guard';
 import { AuthService } from '@/modules/auth/auth.service';
 import { AuthConfirmForgotPasswordDto } from '@/modules/auth/dtos/auth-confirm-forgot-password.dto';
@@ -62,7 +62,12 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @IsPublic()
-  @ApiDocs({ isPublic: true, tags: 'auth', response: [400] })
+  @ApiDocs({
+    isPublic: true,
+    tags: 'auth',
+    headers: [{ name: 'Refresh-Token' }, { name: 'Device-Identifier' }],
+    response: [400],
+  })
   async refresh(
     @DeviceIdentifier() deviceIdentifier: string,
     @CurrentUser() user: User,

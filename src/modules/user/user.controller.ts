@@ -11,7 +11,6 @@ import {
   Post,
   UploadedFile,
 } from '@nestjs/common';
-import { CreateUserDto } from '@/modules/user/dtos/create-user.dto';
 import { UserService } from '@/modules/user/user.service';
 import { UserDto } from '@/modules/user/dtos/user.dto';
 import { UseInterceptorFile } from '@/common/decorators/use-file-interceptor.decorator';
@@ -19,6 +18,8 @@ import { File } from '@/infra/storage/storage.service';
 import { ParseFilePipe } from '@/common/pipes/parse-file-pipe';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Role } from '@/modules/user/enums/role.enum';
+import { CreateUserDto } from '@/modules/user/dtos/create-user.dto';
+import { UpdateUserDto } from '@/modules/user/dtos/update-user.dto';
 
 @Controller('users')
 export class UserController {
@@ -26,12 +27,13 @@ export class UserController {
 
   @Post()
   @Roles(Role.ADMIN)
+  @UseInterceptorFile('file')
   @ApiDocs({ tags: 'users', response: [400, 401] })
   async create(
     @Body() body: CreateUserDto,
     @UploadedFile(new ParseFilePipe({ isRequired: false })) file?: File,
   ): Promise<UserDto> {
-    return this.userService.create(body, file);
+    return this.userService.create(body, file?.filename);
   }
 
   @Get()
@@ -51,7 +53,7 @@ export class UserController {
   @ApiDocs({ tags: 'users', response: [400, 401, 404] })
   async update(
     @Param('id') id: string,
-    @Body() body: CreateUserDto,
+    @Body() body: UpdateUserDto,
     @UploadedFile(new ParseFilePipe({ isRequired: false })) file?: File,
   ): Promise<UserDto> {
     return this.userService.update(id, body, file);

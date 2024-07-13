@@ -6,13 +6,15 @@ import {
 import { HashService } from '@/infra/hash/hash.service';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { Code } from '@/common/helpers/code';
-import { CreateUserQueue } from '@/modules/user/queues/create-user.queue';
 import { Not } from 'typeorm';
 import { CreateUserDto } from '@/modules/user/dtos/create-user.dto';
 import { UpdateUserDto } from '@/modules/user/dtos/update-user.dto';
 import { I18nService } from '@/infra/i18n/i18n.service';
 import { File, StorageService } from '@/infra/storage/storage.service';
 import { UserDto } from '@/modules/user/dtos/user.dto';
+import { CreateUserQueue } from '@/modules/user/queues/create-user.queue';
+import { SaveUserAvatarQueue } from '@/modules/user/queues/save-user-avatar.queue';
+import environment from '@/configs/environment';
 
 @Injectable()
 export class UserService {
@@ -22,11 +24,12 @@ export class UserService {
     private readonly i18nService: I18nService,
     private readonly storageService: StorageService,
     private readonly createUserQueue: CreateUserQueue,
+    private readonly saveUserAvatarQueue: SaveUserAvatarQueue,
   ) {}
 
   async create(
     createUserDto: CreateUserDto,
-    file: File | undefined,
+    fileName: string | undefined,
   ): Promise<UserDto> {
     const userExists = await this.typeormService.user.existsBy({
       email: createUserDto.email,
@@ -42,26 +45,22 @@ export class UserService {
       hasLowercase: true,
       hasUppercase: true,
       hasSpecialCharacters: true,
-      numbers: true,
+      hasNumbers: true,
       length: 12,
     });
 
     const passwordHash = await this.hashService.hash(password);
 
-    let user = this.typeormService.user.create({
+    const user = this.typeormService.user.create({
       email: createUserDto.email,
       passwordHash,
+      avatarPath: fileName,
+      avatarUrl: fileName ? `${environment.BASE_URL}/${fileName}` : undefined,
     });
 
-    if (file) {
-      const { path, publicUrl } = await this.storageService.uploadFile(
-        user,
-        file,
-      );
-
-      user = this.typeormService.user.merge(user, {
-        avatarUrl: publicUrl,
-        avatarPath: path,
+    if (fileName) {
+      await this.saveUserAvatarQueue.add({
+        userId: user.id,
       });
     }
 

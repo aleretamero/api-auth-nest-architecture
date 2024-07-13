@@ -1,4 +1,3 @@
-import { MongoService } from '@/infra/database/mongo/mongo-service';
 import {
   Injectable,
   NestInterceptor,
@@ -8,12 +7,13 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { LogErrorService } from './log-error.service';
 
 @Injectable()
-export class LoggingErrorInterceptor implements NestInterceptor {
+export class LogErrorInterceptor implements NestInterceptor {
   private logger = new Logger('ErrorInterceptor');
 
-  constructor(private readonly mongoService: MongoService) {}
+  constructor(private readonly logErrorService: LogErrorService) {}
 
   intercept(ctx: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
@@ -22,16 +22,15 @@ export class LoggingErrorInterceptor implements NestInterceptor {
 
         const statusCode = error.status ?? error.statusCode;
 
-        const log = await this.mongoService.errorLogModel.create({
+        const log = await this.logErrorService.create({
           method: request.method,
           url: request.url,
           statusCode: statusCode,
           errorMessage: error.message,
           userId: request.user?.id,
           stack: error.stack,
-          requestHeaders: JSON.stringify(request.headers, null, 2),
-          requestBody: JSON.stringify(request.body, null, 2),
-          timestamp: new Date().toISOString(),
+          requestHeaders: request.headers,
+          requestBody: request.body,
         });
 
         this.logger.error(

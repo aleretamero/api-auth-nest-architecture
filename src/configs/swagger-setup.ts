@@ -19,5 +19,5 @@ export default (app: INestApplication) => {
   const port = environment.PORT;
 
   SwaggerModule.setup(prefix, app, document);
-  logger.log(`Swagger is running on http://localhost:${port}/${prefix}`);
+  logger.verbose(`Swagger is running on http://localhost:${port}/${prefix}`);
 };

@@ -3,9 +3,10 @@ import * as fs from 'node:fs';
 import * as multer from 'multer';
 import { BadRequestException } from '@nestjs/common';
 import { Code } from '@/common/helpers/code';
-import { ClockUtil } from '@/common/helpers/clock-util';
+// import { ClockUtil } from '@/common/helpers/clock-util';
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
-export const multerOptions = {
+export const multerOptions: MulterOptions = {
   storage: multer.diskStorage({
     destination: (
       req: Express.Request,
@@ -13,6 +14,7 @@ export const multerOptions = {
       callback,
     ) => {
       const uploadsDir = path.resolve(__dirname, '../../uploads');
+
       if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
       }
@@ -24,9 +26,9 @@ export const multerOptions = {
       file: Express.Multer.File,
       callback: (error: Error | null, filename: string) => void,
     ) => {
-      const dateString = ClockUtil.format('');
-      const codeString = Code.generate(6);
-      callback(null, `${dateString}_${codeString}`);
+      // const dateString = ClockUtil.format('');
+      const codeString = Code.generate(10);
+      callback(null, `${codeString}.${file.originalname?.split('.').pop()}`);
     },
   }),
 

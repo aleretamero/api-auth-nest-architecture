@@ -1,6 +1,8 @@
+import * as path from 'node:path';
 import environment from '@/configs/environment';
 import { Injectable } from '@nestjs/common';
 import { StorageProvider } from '@/infra/storage/storage.provider';
+import { FileSystem } from '@/common/helpers/file-system';
 
 export type Uploadable =
   | {
@@ -40,29 +42,33 @@ export class StorageService {
     return { path: data.path, publicUrl };
   }
 
-  // async uploadFileFromPath(
-  //   uploadable: Uploadable,
-  //   path: string,
-  // ): Promise<Output> {
-  //   const uploadsDir = path.resolve(__dirname, '../../../uploads');
+  async uploadFileFromPath(
+    uploadable: Uploadable,
+    pathName: string,
+  ): Promise<Output> {
+    const filePath = path.resolve(__dirname, '../../../uploads', pathName);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const buffer = FileSystem.getStream(filePath);
+    // const bucket = await this.getOrCreateBucket(uploadable);
 
-  //   const bucket = await this.getOrCreateBucket(uploadable);
+    console.log(filePath);
 
-  //   const { data, error } = await this.client.storage
-  //     .from(bucket)
-  //     .upload(file.filename, file.buffer, {
-  //       upsert: true,
-  //     });
+    // const { data, error } = await this.client.storage
+    //   .from(bucket)
+    //   .upload(pathName, buffer, {
+    //     upsert: true,
+    //   });
 
-  //   if (error) {
-  //     console.error('Error uploading file', error);
-  //     throw new Error('Error uploading file');
-  //   }
+    // if (error) {
+    //   console.error('Error uploading file', error);
+    //   throw new Error('Error uploading file');
+    // }
 
-  //   const publicUrl = await this.getPublicUrl(uploadable, data.path);
+    // const publicUrl = await this.getPublicUrl(uploadable, data.path);
 
-  //   return { path: data.path, publicUrl };
-  // }
+    // return { path: data.path, publicUrl };
+    return { path: pathName, publicUrl: '' };
+  }
 
   async deleteFile(uploadable: Uploadable, path: string): Promise<void> {
     const { error } = await this.client.storage

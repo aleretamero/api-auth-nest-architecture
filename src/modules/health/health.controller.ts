@@ -1,15 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiDocs } from '@/common/swagger/api-config.swagger';
-
-import { IsPublic } from '@/common/decorators/public.decorator';
-import { HealthDto } from '@/modules/health/dtos/health.dto';
+import { IsPublic } from '@/common/decorators/is-public.decorator';
+import { MessageDto } from '@/common/dtos/message.dto';
 
 @Controller('health')
 export class HealthController {
   @Get()
   @IsPublic()
   @ApiDocs({ tags: 'health', isPublic: true })
-  getVersionIphone(): HealthDto {
-    return new HealthDto('Status: OK');
+  status(): MessageDto {
+    return new MessageDto('Status: OK');
   }
 }

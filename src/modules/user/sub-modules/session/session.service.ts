@@ -26,15 +26,15 @@ export class SessionService {
     }
 
     const accessToken = await this.jwtService.sign({
-      issuer: 'ACCESS_TOKEN',
-      subject: user.id,
-      expiresIn: '15m',
+      iss: 'ACCESS_TOKEN',
+      sub: user.id,
+      exp: '15m',
     });
 
     const refreshToken = await this.jwtService.sign({
-      issuer: 'REFRESH_TOKEN',
-      subject: user.id,
-      expiresIn: '7d',
+      iss: 'REFRESH_TOKEN',
+      sub: user.id,
+      exp: '7d',
     });
 
     const hashedAccessToken = await this.hashService.hash(accessToken);
