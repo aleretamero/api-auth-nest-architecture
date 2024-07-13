@@ -1,5 +1,5 @@
-import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 import { Request } from 'express';
+import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 
 export const DeviceIdentifier = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {

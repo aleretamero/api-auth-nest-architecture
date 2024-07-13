@@ -2,7 +2,6 @@ import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { Injectable } from '@nestjs/common';
 import { UserCodeStatus } from '@/modules/user/sub-modules/user-code/enums/user-code-status.enum';
 import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
-import { User } from '@/modules/user/entities/user.entity';
 import { ClockUtil } from '@/common/helpers/clock-util';
 import { Code } from '@/common/helpers/code';
 import { HashService } from '@/infra/hash/hash.service';
@@ -14,11 +13,11 @@ export class UserCodeService {
     private readonly hashService: HashService,
   ) {}
 
-  async create(user: User, type: UserCodeType): Promise<string> {
+  async create(userId: string, type: UserCodeType): Promise<string> {
     await this.typeormService.userCode.update(
       {
-        userId: user.id,
-        type: type,
+        userId,
+        type,
         status: UserCodeStatus.PENDING,
       },
       {
@@ -31,7 +30,7 @@ export class UserCodeService {
     const expiresIn = ClockUtil.getTimestamp('30m');
 
     const userCode = this.typeormService.userCode.create({
-      userId: user.id,
+      userId,
       type,
       code: hashedCode,
       expiresIn,
@@ -43,11 +42,11 @@ export class UserCodeService {
   }
 
   async confirm(
-    user: User,
+    userId: string,
     type: UserCodeType,
     code: string,
   ): Promise<boolean> {
-    const isValid = await this.isValid(user, type, code);
+    const isValid = await this.isValid(userId, type, code);
 
     if (!isValid) {
       return false;
@@ -56,7 +55,7 @@ export class UserCodeService {
     const { id } = (await this.typeormService.userCode.findOne({
       select: ['id'],
       where: {
-        user,
+        userId,
         type,
         status: UserCodeStatus.PENDING,
       },
@@ -70,13 +69,13 @@ export class UserCodeService {
   }
 
   async isValid(
-    user: User,
+    userId: string,
     type: UserCodeType,
     code: string,
   ): Promise<boolean> {
     const userCode = await this.typeormService.userCode.findOne({
       where: {
-        user,
+        userId,
         type,
         status: UserCodeStatus.PENDING,
       },

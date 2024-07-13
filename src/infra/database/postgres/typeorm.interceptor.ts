@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import {
   CallHandler,
   ExecutionContext,
@@ -14,8 +13,7 @@ export class TypeormInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
-    // get request object
-    const req = context.switchToHttp().getRequest<Request>();
+    const req = context.switchToHttp().getRequest<Express.Request>();
 
     const queryRunner = req.QUERY_RUNNER;
 

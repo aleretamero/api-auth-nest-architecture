@@ -1,10 +1,9 @@
-import { Request } from 'express';
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 import { User } from '@/modules/user/entities/user.entity';
 
 export const CurrentUser = createParamDecorator(
   (filter: keyof User, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest<Request>();
+    const request = ctx.switchToHttp().getRequest<Express.Request>();
 
     if (!request.user) {
       throw new Error('User not found in request context.');

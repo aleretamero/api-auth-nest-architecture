@@ -6,7 +6,7 @@ import {
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { CreatePersonalDataDto } from '@/modules/user/sub-modules/personal-data/dto/create-personal-data.dto';
 import { UpdatePersonalDataDto } from '@/modules/user/sub-modules/personal-data/dto/update-personal-data.dto';
-import { PersonalDataPresenter } from '@/modules/user/sub-modules/personal-data/presenters/personal-data.presenter';
+import { PersonalDataDto } from '@/modules/user/sub-modules/personal-data/dto/personal-data.dto';
 import { I18nService } from '@/infra/i18n/i18n.service';
 
 @Injectable()
@@ -14,13 +14,12 @@ export class PersonalDataService {
   constructor(
     private readonly typeormService: TypeormService,
     private readonly i18nService: I18nService,
-    private readonly presenter: PersonalDataPresenter,
   ) {}
 
   async create(
     userId: string,
     createPersonalDatumDto: CreatePersonalDataDto,
-  ): Promise<PersonalDataPresenter> {
+  ): Promise<PersonalDataDto> {
     const userAlreadyHasPersonalData =
       await this.typeormService.personalData.existsBy({
         userId,
@@ -41,16 +40,18 @@ export class PersonalDataService {
 
     await this.typeormService.personalData.save(personalData);
 
-    return this.presenter.present(personalData);
+    return new PersonalDataDto(personalData);
   }
 
-  async findAll(): Promise<PersonalDataPresenter[]> {
-    return this.presenter.present(
-      await this.typeormService.personalData.find(),
+  async findAll(): Promise<PersonalDataDto[]> {
+    const personalDatas = await this.typeormService.personalData.find();
+
+    return personalDatas.map(
+      (personalData) => new PersonalDataDto(personalData),
     );
   }
 
-  async findOne(id: string): Promise<PersonalDataPresenter> {
+  async findOne(id: string): Promise<PersonalDataDto> {
     const personalData = await this.typeormService.personalData.findOne({
       where: { id },
     });
@@ -61,13 +62,13 @@ export class PersonalDataService {
       );
     }
 
-    return this.presenter.present(personalData);
+    return new PersonalDataDto(personalData);
   }
 
   async update(
     userId: string,
     updatePersonalDataDto: UpdatePersonalDataDto,
-  ): Promise<PersonalDataPresenter> {
+  ): Promise<PersonalDataDto> {
     const personalData = await this.typeormService.personalData.findOne({
       where: { userId },
     });
@@ -85,7 +86,7 @@ export class PersonalDataService {
 
     await this.typeormService.personalData.save(updatedPersonalDatum);
 
-    return this.presenter.present(updatedPersonalDatum);
+    return new PersonalDataDto(personalData);
   }
 
   async remove(userId: string): Promise<void> {

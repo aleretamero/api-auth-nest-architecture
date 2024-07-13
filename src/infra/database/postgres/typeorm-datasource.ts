@@ -12,7 +12,6 @@ export const dataSourceOptions: DataSourceOptions = {
   migrations: [`${__dirname}/migrations/*{.ts,.js}`],
   entities: [`${__dirname}/../../../modules/**/*.entity{.ts,.js}`],
   synchronize: true,
-  // logging: ['query', 'error'],
 };
 
 export default new DataSource(dataSourceOptions);

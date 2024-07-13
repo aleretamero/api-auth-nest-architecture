@@ -5,28 +5,29 @@ import {
 } from '@nestjs/common';
 import { HashService } from '@/infra/hash/hash.service';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
-import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
-import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
 import { Code } from '@/common/helpers/code';
 import { CreateUserQueue } from '@/modules/user/queues/create-user.queue';
-import { UserPresenter } from '@/modules/user/presenters/user.presenter';
 import { Not } from 'typeorm';
 import { CreateUserDto } from '@/modules/user/dtos/create-user.dto';
 import { UpdateUserDto } from '@/modules/user/dtos/update-user.dto';
 import { I18nService } from '@/infra/i18n/i18n.service';
+import { File, StorageService } from '@/infra/storage/storage.service';
+import { UserDto } from '@/modules/user/dtos/user.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly typeormService: TypeormService,
     private readonly hashService: HashService,
-    private readonly userCodeService: UserCodeService,
     private readonly i18nService: I18nService,
+    private readonly storageService: StorageService,
     private readonly createUserQueue: CreateUserQueue,
-    private readonly userPresenter: UserPresenter,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<UserPresenter> {
+  async create(
+    createUserDto: CreateUserDto,
+    file: File | undefined,
+  ): Promise<UserDto> {
     const userExists = await this.typeormService.user.existsBy({
       email: createUserDto.email,
     });
@@ -47,30 +48,41 @@ export class UserService {
 
     const passwordHash = await this.hashService.hash(password);
 
-    const user = this.typeormService.user.create({
+    let user = this.typeormService.user.create({
       email: createUserDto.email,
       passwordHash,
     });
 
-    const code = await this.userCodeService.create(
-      user,
-      UserCodeType.EMAIL_VERIFICATION,
-    );
+    if (file) {
+      const { path, publicUrl } = await this.storageService.uploadFile(
+        user,
+        file,
+      );
 
-    await this.createUserQueue.add({ code, email: user.email, password });
+      user = this.typeormService.user.merge(user, {
+        avatarUrl: publicUrl,
+        avatarPath: path,
+      });
+    }
+
+    await this.createUserQueue.add({
+      userId: user.id,
+      email: user.email,
+      password,
+    });
 
     await this.typeormService.user.save(user);
 
-    return this.userPresenter.present(user);
+    return new UserDto(user);
   }
 
-  async findAll(): Promise<UserPresenter[]> {
+  async findAll(): Promise<UserDto[]> {
     const users = await this.typeormService.user.find();
 
-    return this.userPresenter.present(users);
+    return users.map((user) => new UserDto(user));
   }
 
-  async findOne(id: string): Promise<UserPresenter> {
+  async findOne(id: string): Promise<UserDto> {
     const user = await this.typeormService.user.findOne({
       where: { id },
     });
@@ -79,13 +91,14 @@ export class UserService {
       throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
-    return this.userPresenter.present(user);
+    return new UserDto(user);
   }
 
   async update(
     id: string,
     createUserDto: UpdateUserDto,
-  ): Promise<UserPresenter> {
+    file: File | undefined,
+  ): Promise<UserDto> {
     let user = await this.typeormService.user.findOne({
       where: { id },
     });
@@ -106,8 +119,26 @@ export class UserService {
         );
       }
 
-      user.email = createUserDto.email;
-      user.emailVerified = false;
+      user = this.typeormService.user.merge(user, {
+        email: createUserDto.email,
+        emailVerified: false,
+      });
+    }
+
+    if (file && user.avatarPath) {
+      await this.storageService.deleteFile(user, user.avatarPath);
+    }
+
+    if (file) {
+      const { path, publicUrl } = await this.storageService.uploadFile(
+        user,
+        file,
+      );
+
+      user = this.typeormService.user.merge(user, {
+        avatarUrl: publicUrl,
+        avatarPath: path,
+      });
     }
 
     user = await this.typeormService.user.save(user);
@@ -117,7 +148,7 @@ export class UserService {
       // await this.userCodeService.create(user, UserCodeType.EMAIL_VERIFICATION);
     }
 
-    return this.userPresenter.present(user);
+    return new UserDto(user);
   }
 
   async delete(id: string): Promise<void> {
@@ -127,6 +158,10 @@ export class UserService {
 
     if (!user) {
       throw new NotFoundException(this.i18nService.t('user.not_found'));
+    }
+
+    if (user.avatarPath) {
+      await this.storageService.deleteFile(user, user.avatarPath);
     }
 
     await this.typeormService.user.remove(user);

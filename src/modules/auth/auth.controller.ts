@@ -12,15 +12,15 @@ import { DeviceIdentifier } from '@/common/decorators/device-identifier.decorato
 import { ParseEmailPipe } from '@/common/pipes/parse-email.pipe';
 import { User } from '@/modules/user/entities/user.entity';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Public } from '@/common/decorators/public.decorator';
+import { IsPublic } from '@/common/decorators/public.decorator';
 import { AuthRefreshGuard } from '@/common/guards/auth-refresh.guard';
-import { SessionPresenter } from '@/modules/user/sub-modules/session/presenters/session.presenter';
-import { UserPresenter } from '@/modules/user/presenters/user.presenter';
 import { AuthService } from '@/modules/auth/auth.service';
 import { AuthConfirmForgotPasswordDto } from '@/modules/auth/dtos/auth-confirm-forgot-password.dto';
 import { AuthResetPasswordDto } from '@/modules/auth/dtos/auth-reset-password.dto';
 import { AuthConfirmEmailDto } from '@/modules/auth/dtos/auth-confirm-email.dto';
 import { AuthLoginDto } from '@/modules/auth/dtos/auth-login.dto';
+import { SessionDto } from '@/modules/user/sub-modules/session/dtos/session.dto';
+import { UserDto } from '@/modules/user/dtos/user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -28,23 +28,23 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @Public()
+  @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400] })
   async register(
     @DeviceIdentifier() deviceIdentifier: string,
     @Body() body: AuthLoginDto,
-  ): Promise<SessionPresenter> {
+  ): Promise<SessionDto> {
     return this.authService.register(deviceIdentifier, body);
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @Public()
+  @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400] })
   async login(
     @DeviceIdentifier() deviceIdentifier: string,
     @Body() body: AuthLoginDto,
-  ): Promise<SessionPresenter> {
+  ): Promise<SessionDto> {
     return this.authService.login(deviceIdentifier, body);
   }
 
@@ -61,18 +61,18 @@ export class AuthController {
   @UseGuards(AuthRefreshGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @Public()
-  @ApiDocs({ isPublic: true, tags: 'auth', response: [400, 401] }) // TODO: update guard to return 400
+  @IsPublic()
+  @ApiDocs({ isPublic: true, tags: 'auth', response: [400] })
   async refresh(
     @DeviceIdentifier() deviceIdentifier: string,
     @CurrentUser() user: User,
-  ): Promise<SessionPresenter> {
+  ): Promise<SessionDto> {
     return this.authService.refresh(deviceIdentifier, user);
   }
 
   @Post('email/new-code')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Public()
+  @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400, 404] })
   async newEmailCode(
     @Body('email', ParseEmailPipe) email: string,
@@ -82,7 +82,7 @@ export class AuthController {
 
   @Post('email/confirm')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Public()
+  @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400] })
   async confirmEmail(@Body() body: AuthConfirmEmailDto): Promise<void> {
     return this.authService.confirmEmail(body);
@@ -90,7 +90,7 @@ export class AuthController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Public()
+  @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400, 404] })
   async forgotPassword(
     @Body('email', ParseEmailPipe) email: string,
@@ -98,11 +98,11 @@ export class AuthController {
     return this.authService.newForgotPasswordCode(email);
   }
 
-  @Post('forgot-password/confirm')
+  @Post('forgot-password/verify')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Public()
+  @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400] })
-  async confirmForgotPassword(
+  async verifyForgotPasswordCode(
     @Body() body: AuthConfirmForgotPasswordDto,
   ): Promise<void> {
     return this.authService.verifyForgotPasswordCode(body);
@@ -110,18 +110,18 @@ export class AuthController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Public()
+  @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400, 404] })
   async resetPassword(
     @DeviceIdentifier() deviceIdentifier: string,
     @Body() body: AuthResetPasswordDto,
-  ): Promise<SessionPresenter> {
+  ): Promise<SessionDto> {
     return this.authService.resetPassword(deviceIdentifier, body);
   }
 
   @Get('me')
   @ApiDocs({ tags: 'auth', response: [400, 401] })
-  async me(@CurrentUser() user: User): Promise<UserPresenter> {
+  async me(@CurrentUser() user: User): Promise<UserDto> {
     return await this.authService.me(user);
   }
 }

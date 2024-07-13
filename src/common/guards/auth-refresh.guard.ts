@@ -1,5 +1,6 @@
 import { Request } from 'express';
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
@@ -25,13 +26,13 @@ export class AuthRefreshGuard implements CanActivate {
     const deviceIdentifier = this.extractDeviceIdentifierFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException(
+      throw new BadRequestException(
         this.i18nService.t('auth.token.not_found_or_invalid'),
       );
     }
 
     if (!deviceIdentifier) {
-      throw new UnauthorizedException(
+      throw new BadRequestException(
         this.i18nService.t('auth.device_identifier.not_found'),
       );
     }
@@ -54,14 +55,16 @@ export class AuthRefreshGuard implements CanActivate {
 
       const isMatch = await this.hashService.compare(
         token,
-        session.accessToken,
+        session.refreshToken,
       );
 
       if (!isMatch) return false;
 
       request.user = session.user;
     } catch {
-      return false;
+      throw new BadRequestException(
+        this.i18nService.t('auth.token.not_found_or_invalid'),
+      );
     }
 
     return true;
@@ -76,7 +79,7 @@ export class AuthRefreshGuard implements CanActivate {
   private extractDeviceIdentifierFromHeader(
     request: Request,
   ): string | undefined {
-    return typeof request.headers['device-identifier'] === 'string'
+    return request.headers['device-identifier'] === 'string'
       ? request.headers['device-identifier']
       : undefined;
   }

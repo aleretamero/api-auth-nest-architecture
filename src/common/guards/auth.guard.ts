@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { DataSource } from 'typeorm';
 import { JwtService } from '@/infra/jwt/jwt.service';
-import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
+import { IS_PUBLIC_KEY } from '@/common/decorators/is-public.decorator';
 import { I18nService } from '@/infra/i18n/i18n.service';
 import { HashService } from '@/infra/hash/hash.service';
 

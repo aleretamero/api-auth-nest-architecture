@@ -11,12 +11,6 @@ import { QUEUE, QueueService } from '@/infra/queue/queue.service';
         host: environment.QUEUE_REDIS_HOST,
         port: environment.QUEUE_REDIS_PORT,
       },
-      // defaultJobOptions: {
-      //   removeOnComplete: {
-      //     count: 3,
-      //     age: 1000 * 10, // 10 seconds
-      //   },
-      // },
     }),
     BullModule.registerQueue(
       ...Object.values(QUEUE).map((queue) => ({ name: queue })),

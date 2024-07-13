@@ -12,6 +12,7 @@ import { ID } from '@/common/helpers/id';
 import { Session } from '@/modules/user/sub-modules/session/entities/session.entity';
 import { UserCode } from '@/modules/user/sub-modules/user-code/entities/user-code.entity';
 import { PersonalData } from '@/modules/user/sub-modules/personal-data/entities/personal-data.entity';
+import { Role } from '@/modules/user/enums/role.enum';
 
 @Entity('users')
 export class User {
@@ -33,6 +34,9 @@ export class User {
 
   @Column('boolean', { name: 'email_verified', default: false })
   emailVerified!: boolean;
+
+  @Column('json', { default: [Role.USER] })
+  roles!: Role[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;

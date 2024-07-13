@@ -59,4 +59,8 @@ export abstract class ClockUtil {
 
     return timestamp;
   }
+
+  static format(format: string): string {
+    return new Date(format).toISOString();
+  }
 }

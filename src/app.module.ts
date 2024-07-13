@@ -5,7 +5,7 @@ import { AuthGuard } from '@/common/guards/auth.guard';
 
 import ModulesModules from '@/modules';
 import InfraModules from '@/infra';
-// import { ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   imports: [...InfraModules, ...ModulesModules],

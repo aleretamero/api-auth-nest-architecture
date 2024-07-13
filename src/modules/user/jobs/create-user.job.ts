@@ -9,12 +9,14 @@ import {
 import { Job } from 'bull';
 import { Logger } from '@nestjs/common';
 import { MailService } from '@/infra/mail/mail.service';
+import { UserCodeService } from '../sub-modules/user-code/user-code.service';
+import { UserCodeType } from '../sub-modules/user-code/enums/user-code-type.enum';
 
 export namespace CreateUserJob {
   export type Data = {
+    userId: string;
     email: string;
     password: string;
-    code: string;
   };
 }
 
@@ -22,16 +24,24 @@ export namespace CreateUserJob {
 export class CreateUserJob {
   private readonly logger = new Logger(CreateUserJob.name);
 
-  constructor(private readonly mailService: MailService) {}
+  constructor(
+    private readonly mailService: MailService,
+    private readonly userCodeService: UserCodeService,
+  ) {}
 
   @Process(JOB.CREATE_USER)
   public async process({ data }: Job<CreateUserJob.Data>): Promise<void> {
+    const code = await this.userCodeService.create(
+      data.userId,
+      UserCodeType.EMAIL_VERIFICATION,
+    );
+
     await this.mailService.sendMail({
       to: data.email,
       subject: 'Create User',
       text:
         'Your verification code is: ' +
-        data.code +
+        code +
         ' and your password is: ' +
         data.password,
     });

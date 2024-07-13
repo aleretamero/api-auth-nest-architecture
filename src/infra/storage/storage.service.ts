@@ -2,41 +2,31 @@ import environment from '@/configs/environment';
 import { Injectable } from '@nestjs/common';
 import { StorageProvider } from '@/infra/storage/storage.provider';
 
-namespace StorageService {
-  export type Uploadable =
-    | {
-        id: string;
-        constructor: {
-          name: string;
-        };
-      }
-    | {
-        id: string;
+export type Uploadable =
+  | {
+      constructor: {
         name: string;
       };
+    }
+  | string;
 
-  export type File = Express.Multer.File;
+export type File = Express.Multer.File;
 
-  export type Output = {
-    path: string;
-    publicUrl: string;
-  };
-}
+export type Output = {
+  path: string;
+  publicUrl: string;
+};
 
 @Injectable()
 export class StorageService {
   constructor(private readonly client: StorageProvider) {}
 
-  async uploadFile(
-    uploadable: StorageService.Uploadable,
-    file: StorageService.File,
-  ): Promise<StorageService.Output> {
+  async uploadFile(uploadable: Uploadable, file: File): Promise<Output> {
     const bucket = await this.getOrCreateBucket(uploadable);
-    const isoDateNow = new Date().toISOString();
 
     const { data, error } = await this.client.storage
       .from(bucket)
-      .upload(`${uploadable.id}_${isoDateNow}`, file.buffer, {
+      .upload(file.filename, file.buffer, {
         upsert: true,
       });
 
@@ -50,10 +40,31 @@ export class StorageService {
     return { path: data.path, publicUrl };
   }
 
-  async deleteFile(
-    uploadable: StorageService.Uploadable,
-    path: string,
-  ): Promise<void> {
+  // async uploadFileFromPath(
+  //   uploadable: Uploadable,
+  //   path: string,
+  // ): Promise<Output> {
+  //   const uploadsDir = path.resolve(__dirname, '../../../uploads');
+
+  //   const bucket = await this.getOrCreateBucket(uploadable);
+
+  //   const { data, error } = await this.client.storage
+  //     .from(bucket)
+  //     .upload(file.filename, file.buffer, {
+  //       upsert: true,
+  //     });
+
+  //   if (error) {
+  //     console.error('Error uploading file', error);
+  //     throw new Error('Error uploading file');
+  //   }
+
+  //   const publicUrl = await this.getPublicUrl(uploadable, data.path);
+
+  //   return { path: data.path, publicUrl };
+  // }
+
+  async deleteFile(uploadable: Uploadable, path: string): Promise<void> {
     const { error } = await this.client.storage
       .from(this.extractBucket(uploadable))
       .remove([path]);
@@ -63,9 +74,7 @@ export class StorageService {
     }
   }
 
-  private async getOrCreateBucket(
-    uploadable: StorageService.Uploadable,
-  ): Promise<string> {
+  private async getOrCreateBucket(uploadable: Uploadable): Promise<string> {
     const bucket = this.extractBucket(uploadable);
     const buckets = (await this.client.storage.listBuckets()).data;
 
@@ -78,7 +87,7 @@ export class StorageService {
   }
 
   private async getPublicUrl(
-    uploadable: StorageService.Uploadable,
+    uploadable: Uploadable,
     path: string,
   ): Promise<string> {
     const { data } = this.client.storage
@@ -88,12 +97,12 @@ export class StorageService {
     return data.publicUrl;
   }
 
-  private extractBucket(uploadable: StorageService.Uploadable): string {
+  private extractBucket(uploadable: Uploadable): string {
     const stage = this.stage();
     let uploadableName: string;
 
-    if ('name' in uploadable) {
-      uploadableName = uploadable.name;
+    if (typeof uploadable === 'string') {
+      uploadableName = uploadable;
     } else {
       uploadableName = uploadable.constructor.name;
     }

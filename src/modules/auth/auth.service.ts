@@ -7,7 +7,6 @@ import { HashService } from '@/infra/hash/hash.service';
 import { AuthLoginDto } from '@/modules/auth/dtos/auth-login.dto';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { SessionService } from '@/modules/user/sub-modules/session/session.service';
-import { SessionPresenter } from '@/modules/user/sub-modules/session/presenters/session.presenter';
 import { User } from '@/modules/user/entities/user.entity';
 import { AuthRegisterDto } from '@/modules/auth/dtos/auth-register.dto';
 import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
@@ -16,10 +15,11 @@ import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-co
 import { AuthConfirmEmailDto } from '@/modules/auth/dtos/auth-confirm-email.dto';
 import { AuthConfirmForgotPasswordDto } from '@/modules/auth/dtos/auth-confirm-forgot-password.dto';
 import { AuthForgotPasswordQueue } from '@/modules/auth/queues/auth-forgot-password.queue';
-import { UserPresenter } from '@/modules/user/presenters/user.presenter';
 import { AuthResetPasswordDto } from '@/modules/auth/dtos/auth-reset-password.dto';
 import { AuthNewConfirmEmailCodeQueue } from '@/modules/auth/queues/auth-new-confirm-email-code.queue';
 import { I18nService } from '@/infra/i18n/i18n.service';
+import { SessionDto } from '@/modules/user/sub-modules/session/dtos/session.dto';
+import { UserDto } from '@/modules/user/dtos/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -32,13 +32,12 @@ export class AuthService {
     private readonly authForgotPasswordQueue: AuthForgotPasswordQueue,
     private readonly authNewEmailConfirmationCodeQueue: AuthNewConfirmEmailCodeQueue,
     private readonly i18nService: I18nService,
-    private readonly userPresenter: UserPresenter,
   ) {}
 
   async register(
     deviceIdentifier: string,
     authRegisterDto: AuthRegisterDto,
-  ): Promise<SessionPresenter> {
+  ): Promise<SessionDto> {
     const userExists = await this.typeormService.user.existsBy({
       email: authRegisterDto.email,
     });
@@ -71,7 +70,7 @@ export class AuthService {
   async login(
     deviceIdentifier: string,
     authLoginDto: AuthLoginDto,
-  ): Promise<SessionPresenter> {
+  ): Promise<SessionDto> {
     const user = await this.typeormService.user.findOne({
       where: { email: authLoginDto.email },
     });
@@ -100,10 +99,7 @@ export class AuthService {
     await this.sessionService.remove(user, deviceIdentifier);
   }
 
-  async refresh(
-    deviceIdentifier: string,
-    user: User,
-  ): Promise<SessionPresenter> {
+  async refresh(deviceIdentifier: string, user: User): Promise<SessionDto> {
     return await this.sessionService.create(user, deviceIdentifier);
   }
 
@@ -158,7 +154,7 @@ export class AuthService {
   async resetPassword(
     deviceIdentifier: string,
     authResetPasswordDto: AuthResetPasswordDto,
-  ): Promise<SessionPresenter> {
+  ): Promise<SessionDto> {
     const user = await this.typeormService.user.findOne({
       where: { email: authResetPasswordDto.email },
     });
@@ -213,11 +209,15 @@ export class AuthService {
   async verifyForgotPasswordCode(
     authConfirmForgotPasswordDto: AuthConfirmForgotPasswordDto,
   ): Promise<void> {
+    console.log(authConfirmForgotPasswordDto);
+
     const user = await this.typeormService.user.findOne({
       where: {
         email: authConfirmForgotPasswordDto.email,
       },
     });
+
+    console.log(user);
 
     if (!user) {
       throw new NotFoundException(this.i18nService.t('user.not_found'));
@@ -236,7 +236,7 @@ export class AuthService {
     }
   }
 
-  async me(user: User): Promise<UserPresenter> {
-    return this.userPresenter.present(user);
+  async me(user: User): Promise<UserDto> {
+    return new UserDto(user);
   }
 }

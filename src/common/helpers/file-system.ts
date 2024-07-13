@@ -23,4 +23,11 @@ export class FileSystem {
       }
     }
   }
+
+  static async deleteFile(filePath?: string) {
+    if (filePath) {
+      fs.unlinkSync(filePath);
+      console.log(`${filePath} was deleted'`);
+    }
+  }
 }

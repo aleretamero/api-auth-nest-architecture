@@ -7,14 +7,18 @@ import { QueueModule } from '@/infra/queue/queue.module';
 import { JwtModule } from '@/infra/jwt/jwt.module';
 import { CacheModule } from '@/infra/cache/cache.module';
 import { I18nModule } from '@/infra/i18n/i18n.module';
+import { StorageModule } from '@/infra/storage/storage.module';
+import { RateLimitingModule } from '@/infra/rate-limiting/rate-limiting.module';
 
 export default [
   TypeormModule,
   MongoModule,
   CacheModule,
+  StorageModule,
   MailModule,
   QueueModule,
   JwtModule,
   HashModule,
   I18nModule,
+  RateLimitingModule,
 ] as Type<any>[];

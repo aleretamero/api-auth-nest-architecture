@@ -3,7 +3,7 @@ import { HashService } from '@/infra/hash/hash.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@/infra/jwt/jwt.service';
 import { User } from '@/modules/user/entities/user.entity';
-import { SessionPresenter } from '@/modules/user/sub-modules/session/presenters/session.presenter';
+import { SessionDto } from '@/modules/user/sub-modules/session/dtos/session.dto';
 
 @Injectable()
 export class SessionService {
@@ -11,13 +11,9 @@ export class SessionService {
     private readonly typeormService: TypeormService,
     private readonly jwtService: JwtService,
     private readonly hashService: HashService,
-    private readonly sessionPresenter: SessionPresenter,
   ) {}
 
-  async create(
-    user: User,
-    deviceIdentifier: string,
-  ): Promise<SessionPresenter> {
+  async create(user: User, deviceIdentifier: string): Promise<SessionDto> {
     const sessionsCount = await this.typeormService.session.count({
       where: {
         userId: user.id,
@@ -53,10 +49,7 @@ export class SessionService {
 
     await this.typeormService.session.save(session);
 
-    return this.sessionPresenter.present({
-      accessToken,
-      refreshToken,
-    });
+    return new SessionDto(accessToken, refreshToken);
   }
 
   async remove(user: User, deviceIdentifier: string): Promise<void> {
