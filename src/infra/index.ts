@@ -10,6 +10,7 @@ import { I18nModule } from '@/infra/i18n/i18n.module';
 import { StorageModule } from '@/infra/storage/storage.module';
 import { RateLimitingModule } from '@/infra/rate-limiting/rate-limiting.module';
 import { LoggingModule } from '@/infra/logging/logging.module';
+import { ServeStaticModule } from '@/infra/server-static/server-static.module';
 
 export default [
   TypeormModule,
@@ -23,4 +24,5 @@ export default [
   HashModule,
   I18nModule,
   RateLimitingModule,
+  ServeStaticModule,
 ] as Type<any>[];
