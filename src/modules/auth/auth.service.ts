@@ -232,7 +232,18 @@ export class AuthService {
     }
   }
 
-  async me(user: User): Promise<UserDto> {
+  async me(id: string): Promise<UserDto> {
+    const user = await this.typeormService.user.findOne({
+      where: { id },
+      relations: {
+        personalData: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
+    }
+
     return new UserDto(user);
   }
 }

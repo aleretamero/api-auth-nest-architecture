@@ -43,28 +43,6 @@ export class PersonalDataService {
     return new PersonalDataDto(personalData);
   }
 
-  async findAll(): Promise<PersonalDataDto[]> {
-    const personalDatas = await this.typeormService.personalData.find();
-
-    return personalDatas.map(
-      (personalData) => new PersonalDataDto(personalData),
-    );
-  }
-
-  async findOne(id: string): Promise<PersonalDataDto> {
-    const personalData = await this.typeormService.personalData.findOne({
-      where: { id },
-    });
-
-    if (!personalData) {
-      throw new NotFoundException(
-        this.i18nService.t('user.personal_data.not_found'),
-      );
-    }
-
-    return new PersonalDataDto(personalData);
-  }
-
   async update(
     userId: string,
     updatePersonalDataDto: UpdatePersonalDataDto,

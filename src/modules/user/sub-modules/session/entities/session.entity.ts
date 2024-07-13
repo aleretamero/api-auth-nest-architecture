@@ -33,7 +33,7 @@ export class Session {
   updatedAt!: Date;
 
   @ManyToOne(() => User, (x) => x.sessions, {
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
     deferrable: 'INITIALLY DEFERRED',
   })

@@ -11,7 +11,7 @@ export const dataSourceOptions: DataSourceOptions = {
   ssl: environment.POSTGRES_SSL,
   migrations: [`${__dirname}/migrations/*{.ts,.js}`],
   entities: [`${__dirname}/../../../modules/**/*.entity{.ts,.js}`],
-  synchronize: true,
+  // synchronize: true,
 };
 
 export default new DataSource(dataSourceOptions);

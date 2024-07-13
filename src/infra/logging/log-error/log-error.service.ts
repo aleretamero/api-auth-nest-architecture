@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MongoService } from '@/infra/database/mongo/mongo-service';
-import { CreateLogErrorDto } from '@/infra/logging/log-error/dto/create-log-error.dto';
+import { CreateLogErrorDto } from '@/infra/logging/log-error/dtos/create-log-error.dto';
+import { GetErrosLogQuery } from '@/infra/logging/log-error/queries/get-errors-log.query';
 
 @Injectable()
 export class LogErrorService {
@@ -20,15 +21,11 @@ export class LogErrorService {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async findAll(order: 'asc' | 'desc' = 'desc', limit = 2, offset = 0) {
-    const logs = await this.mongoService.errorLogModel.find();
-
-    return logs
-      .slice(logs.length - 2, logs.length)
-      .sort(
-        (a, b) =>
-          new Date(a.timestamp).getDate() - new Date(b.timestamp).getDate(),
-      );
+  async findAll({ limit = 5, offset = 0, order = 'desc' }: GetErrosLogQuery) {
+    return await this.mongoService.errorLogModel
+      .find()
+      .sort({ timestamp: order })
+      .limit(limit)
+      .skip(offset);
   }
 }

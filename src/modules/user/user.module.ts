@@ -9,19 +9,23 @@ import { QueueModule } from '@/infra/queue/queue.module';
 import { PersonalDataModule } from '@/modules/user/sub-modules/personal-data/personal-data.module';
 import { UserService } from '@/modules/user/user.service';
 import { MailModule } from '@/infra/mail/mail.module';
-import { StorageModule } from '@/infra/storage/storage.module';
 import { SaveUserAvatarQueue } from '@/modules/user/queues/save-user-avatar.queue';
 import { SaveUserAvatarJob } from '@/modules/user/jobs/save-user-avatar.job';
+import { SupabaseModule } from '@/infra/storage/supabase/supabase.module';
+import { LocalStorageModule } from '@/infra/storage/local-storage/local-storage.module';
+import { CacheModule } from '@/infra/cache/cache.module';
 
 @Module({
   imports: [
     HashModule,
     QueueModule,
     MailModule,
-    StorageModule,
+    SupabaseModule,
+    LocalStorageModule,
     SessionModule,
     UserCodeModule,
     PersonalDataModule,
+    CacheModule,
   ],
   controllers: [UserController],
   providers: [

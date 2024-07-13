@@ -65,7 +65,7 @@ export class AuthController {
   @ApiDocs({
     isPublic: true,
     tags: 'auth',
-    headers: [{ name: 'Refresh-Token' }, { name: 'Device-Identifier' }],
+    headers: [{ name: 'Refresh-Token' }],
     response: [400],
   })
   async refresh(
@@ -126,7 +126,7 @@ export class AuthController {
 
   @Get('me')
   @ApiDocs({ tags: 'auth', response: [400, 401] })
-  async me(@CurrentUser() user: User): Promise<UserDto> {
-    return await this.authService.me(user);
+  async me(@CurrentUser('id') userId: string): Promise<UserDto> {
+    return await this.authService.me(userId);
   }
 }

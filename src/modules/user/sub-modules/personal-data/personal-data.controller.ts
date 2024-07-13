@@ -1,12 +1,12 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
-  Param,
   Delete,
   ParseUUIDPipe,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { PersonalDataService } from '@/modules/user/sub-modules/personal-data/personal-data.service';
 import { CreatePersonalDataDto } from '@/modules/user/sub-modules/personal-data/dto/create-personal-data.dto';
@@ -14,41 +14,30 @@ import { UpdatePersonalDataDto } from '@/modules/user/sub-modules/personal-data/
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { ApiDocs } from '@/common/swagger/api-config.swagger';
 
-@Controller('personal-data')
+@Controller('users/me/personal-data')
 export class PersonalDataController {
   constructor(private readonly personalDataService: PersonalDataService) {}
 
   @Post()
   @ApiDocs({ tags: 'personal-data', response: [400, 401] })
   create(
-    @CurrentUser('id') userId: string,
-    @Body() createPersonalDatumDto: CreatePersonalDataDto,
+    @CurrentUser('id', ParseUUIDPipe) userId: string,
+    @Body() createPersonalDataDto: CreatePersonalDataDto,
   ) {
-    return this.personalDataService.create(userId, createPersonalDatumDto);
-  }
-
-  @Get()
-  @ApiDocs({ tags: 'personal-data', response: [401] })
-  index() {
-    return this.personalDataService.findAll();
-  }
-
-  @Get(':id')
-  @ApiDocs({ tags: 'personal-data', response: [400, 401, 404] })
-  show(@Param('id', ParseUUIDPipe) id: string) {
-    return this.personalDataService.findOne(id);
+    return this.personalDataService.create(userId, createPersonalDataDto);
   }
 
   @Patch()
   @ApiDocs({ tags: 'personal-data', response: [400, 401, 404] })
   update(
     @CurrentUser('id', ParseUUIDPipe) userId: string,
-    @Body() updatePersonalDatumDto: UpdatePersonalDataDto,
+    @Body() updatePersonalDataDto: UpdatePersonalDataDto,
   ) {
-    return this.personalDataService.update(userId, updatePersonalDatumDto);
+    return this.personalDataService.update(userId, updatePersonalDataDto);
   }
 
   @Delete()
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiDocs({ tags: 'personal-data', response: [400, 401, 404] })
   remove(@CurrentUser('id', ParseUUIDPipe) userId: string) {
     return this.personalDataService.remove(userId);

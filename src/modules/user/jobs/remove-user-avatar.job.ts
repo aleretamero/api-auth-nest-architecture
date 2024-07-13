@@ -10,27 +10,29 @@ import { Job } from 'bull';
 import { Logger } from '@nestjs/common';
 import { TypeormService } from '@/infra/database/postgres/typeorm.service';
 import { SupabaseService } from '@/infra/storage/supabase/supabase.service';
+import { RemoveLocalUserAvatarQueue } from '@/modules/user/queues/remove-local-user-avatar.queue';
 
-export namespace SaveUserAvatarJob {
+export namespace RemoveUserAvatarJob {
   export type Data = {
     userId: string;
   };
 }
 
-@Processor(QUEUE.SAVE_USER_AVATAR)
-export class SaveUserAvatarJob {
-  private readonly logger = new Logger(SaveUserAvatarJob.name);
+@Processor(QUEUE.REMOVE_USER_AVATAR)
+export class RemoveUserAvatarJob {
+  private readonly logger = new Logger(RemoveUserAvatarJob.name);
 
   constructor(
     private readonly typeormService: TypeormService,
     private readonly supabaseService: SupabaseService,
+    private readonly removeLocalUserAvatarQueue: RemoveLocalUserAvatarQueue,
   ) {}
 
-  @Process(JOB.SAVE_USER_AVATAR)
+  @Process(JOB.REMOVE_USER_AVATAR)
   public async process({
     moveToCompleted,
     data,
-  }: Job<SaveUserAvatarJob.Data>): Promise<void> {
+  }: Job<RemoveUserAvatarJob.Data>): Promise<void> {
     let user = await this.typeormService.user.findOne({
       where: { id: data.userId },
     });
@@ -40,31 +42,28 @@ export class SaveUserAvatarJob {
       return;
     }
 
-    const { path, publicUrl } = await this.supabaseService.uploadFileFromPath(
-      user,
-      user.avatarPath,
-    );
+    await this.supabaseService.deleteFile(user, user.avatarPath);
 
     user = this.typeormService.user.merge(user, {
-      avatarUrl: publicUrl,
-      avatarPath: path,
+      avatarUrl: null,
+      avatarPath: null,
     });
 
-    // await this.typeormService.user.save(user);
+    await this.typeormService.user.save(user);
   }
 
   @OnQueueActive()
-  public onActive(job: Job<SaveUserAvatarJob.Data>): void {
+  public onActive(job: Job<RemoveUserAvatarJob.Data>): void {
     this.logger.log(`Processing job ${job.id} of type ${job.name}`);
   }
 
   @OnQueueCompleted()
-  public onCompleted(job: Job<SaveUserAvatarJob.Data>): void {
+  public onCompleted(job: Job<RemoveUserAvatarJob.Data>): void {
     this.logger.log(`Completed job ${job.id} of type ${job.name}`);
   }
 
   @OnQueueFailed()
-  public onFailed(job: Job<SaveUserAvatarJob.Data>, error: Error): void {
+  public onFailed(job: Job<RemoveUserAvatarJob.Data>, error: Error): void {
     this.logger.error(
       `Failed job ${job.id} of type ${job.name}: ${error.message}`,
     );

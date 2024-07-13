@@ -7,7 +7,7 @@ import { MessageDto } from '@/common/dtos/message.dto';
 export class HealthController {
   @Get()
   @IsPublic()
-  @ApiDocs({ tags: 'health', isPublic: true })
+  @ApiDocs({ tags: 'health', isPublic: true, deviceIdentifier: false })
   status(): MessageDto {
     return new MessageDto('Status: OK');
   }

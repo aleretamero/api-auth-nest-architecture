@@ -8,7 +8,7 @@ type ParseFilePipeOptions = {
 
 @Injectable()
 export class ParseFilePipe implements PipeTransform {
-  private ONE_MEGA_BYTE = 100000;
+  private ONE_MEGA_BYTE = 1024 * 1024;
   private acceptMimeTypes: RegExp;
   private isRequired: boolean;
   private maxSizeInMegaByte: number;

@@ -1,7 +1,7 @@
 import * as path from 'node:path';
 import environment from '@/configs/environment';
 import { Injectable } from '@nestjs/common';
-import { StorageProvider } from '@/infra/storage/storage.provider';
+import { SupabaseProvider } from '@/infra/storage/supabase/supabase.provider';
 import { FileSystem } from '@/common/helpers/file-system';
 
 export type Uploadable =
@@ -20,8 +20,8 @@ export type Output = {
 };
 
 @Injectable()
-export class StorageService {
-  constructor(private readonly client: StorageProvider) {}
+export class SupabaseService {
+  constructor(private readonly client: SupabaseProvider) {}
 
   async uploadFile(uploadable: Uploadable, file: File): Promise<Output> {
     const bucket = await this.getOrCreateBucket(uploadable);

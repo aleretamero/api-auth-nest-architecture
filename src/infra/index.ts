@@ -7,19 +7,21 @@ import { QueueModule } from '@/infra/queue/queue.module';
 import { JwtModule } from '@/infra/jwt/jwt.module';
 import { CacheModule } from '@/infra/cache/cache.module';
 import { I18nModule } from '@/infra/i18n/i18n.module';
-import { StorageModule } from '@/infra/storage/storage.module';
 import { RateLimitingModule } from '@/infra/rate-limiting/rate-limiting.module';
-import { LoggingModule } from '@/infra/logging/logging.module';
 import { ServeStaticModule } from '@/infra/server-static/server-static.module';
+import { LogErrorModule } from '@/infra/logging/log-error/log-error.module';
+import { SupabaseModule } from '@/infra/storage/supabase/supabase.module';
+import { LocalStorageModule } from '@/infra/storage/local-storage/local-storage.module';
 
 export default [
   TypeormModule,
   MongoModule,
   CacheModule,
-  StorageModule,
+  SupabaseModule,
+  LocalStorageModule,
   MailModule,
   QueueModule,
-  LoggingModule,
+  LogErrorModule,
   JwtModule,
   HashModule,
   I18nModule,

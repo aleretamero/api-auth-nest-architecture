@@ -20,6 +20,6 @@ export default (app: INestApplication) =>
       'Content-Type',
       'Authorization',
       'Refresh-Token',
-      'Device-Identifier',
+      'X-Device-Identifier',
     ],
   });

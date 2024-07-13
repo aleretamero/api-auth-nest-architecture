@@ -5,6 +5,6 @@ export const DeviceIdentifier = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest<Request>();
 
-    return request.headers['device-identifier'];
+    return request.headers['x-device-identifier'];
   },
 );

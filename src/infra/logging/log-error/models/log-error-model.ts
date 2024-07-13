@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export namespace ErrorLogModel {
-  export interface CreateErrorLog {
+export namespace LogErrorModel {
+  export interface CreateLogError {
     method: string;
     url: string;
     statusCode: number;
@@ -13,8 +13,8 @@ export namespace ErrorLogModel {
   }
 }
 
-@Schema({ collection: 'error_logs' })
-export class ErrorLogModel {
+@Schema({ collection: 'log_errors' })
+export class LogErrorModel {
   @Prop({ required: true })
   timestamp!: string;
 
@@ -42,12 +42,12 @@ export class ErrorLogModel {
   @Prop({ required: false })
   requestBody?: string;
 
-  constructor(partialModel: Partial<ErrorLogModel>) {
+  constructor(partialModel: Partial<LogErrorModel>) {
     Object.assign(this, partialModel);
   }
 
-  static create = (props: ErrorLogModel.CreateErrorLog): ErrorLogModel => {
-    return new ErrorLogModel({
+  static create = (props: LogErrorModel.CreateLogError): LogErrorModel => {
+    return new LogErrorModel({
       timestamp: new Date().toISOString(),
       method: props.method,
       url: props.url,
@@ -61,4 +61,4 @@ export class ErrorLogModel {
   };
 }
 
-export const ErrorLogSchema = SchemaFactory.createForClass(ErrorLogModel);
+export const ErrorLogSchema = SchemaFactory.createForClass(LogErrorModel);

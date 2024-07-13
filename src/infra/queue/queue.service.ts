@@ -8,6 +8,8 @@ export const QUEUE = {
   FORGOT_PASSWORD: 'FORGOT_PASSWORD',
   CREATE_USER: 'CREATE_USER',
   SAVE_USER_AVATAR: 'SAVE_USER_AVATAR',
+  REMOVE_USER_AVATAR: 'REMOVE_USER_AVATAR',
+  REMOVE_LOCAL_USER_AVATAR: 'REMOVE_LOCAL_USER_AVATAR',
 };
 
 export type QUEUE = (typeof QUEUE)[keyof typeof QUEUE];
@@ -18,6 +20,8 @@ export const JOB = {
   FORGOT_PASSWORD: 'FORGOT_PASSWORD',
   CREATE_USER: 'CREATE_USER',
   SAVE_USER_AVATAR: 'SAVE_USER_AVATAR',
+  REMOVE_USER_AVATAR: 'REMOVE_USER_AVATAR',
+  REMOVE_LOCAL_USER_AVATAR: 'REMOVE_LOCAL_USER_AVATAR',
 };
 
 export type JOB = (typeof JOB)[keyof typeof JOB];
@@ -30,5 +34,7 @@ export class QueueService {
     @InjectQueue(QUEUE.FORGOT_PASSWORD) public forgotPassword: Queue,
     @InjectQueue(QUEUE.CREATE_USER) public createUser: Queue,
     @InjectQueue(QUEUE.SAVE_USER_AVATAR) public saveUserAvatar: Queue,
+    @InjectQueue(QUEUE.REMOVE_USER_AVATAR) public removeUserAvatar: Queue,
+    @InjectQueue(QUEUE.REMOVE_LOCAL_USER_AVATAR) public removeLocalUserAvatar: Queue, // prettier-ignore
   ) {}
 }

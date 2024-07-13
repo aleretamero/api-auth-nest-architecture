@@ -1,9 +1,9 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ErrorLogModel } from '@/infra/database/mongo/models/error-log-model';
+import { LogErrorModel } from '@/infra/logging/log-error/models/log-error-model';
 
 export class MongoService {
   constructor(
-    @InjectModel(ErrorLogModel.name) public errorLogModel: Model<ErrorLogModel>,
+    @InjectModel(LogErrorModel.name) public errorLogModel: Model<LogErrorModel>,
   ) {}
 }

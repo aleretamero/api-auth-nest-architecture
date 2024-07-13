@@ -1,6 +1,6 @@
 import environment from '@/configs/environment';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { Provider } from '@nestjs/common';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
 
 const client = createClient(
   environment.SUPABASE_URL,
@@ -12,9 +12,9 @@ const client = createClient(
   },
 );
 
-export const StorageProvider: Provider<SupabaseClient> = {
-  provide: 'StorageProvider',
+export const SupabaseProvider: Provider<SupabaseClient> = {
+  provide: 'SupabaseProvider',
   useValue: client,
 };
 
-export type StorageProvider = SupabaseClient;
+export type SupabaseProvider = SupabaseClient;

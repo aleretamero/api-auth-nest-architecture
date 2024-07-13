@@ -22,19 +22,14 @@ type ApiDocsOptions = {
   headers?: ApiHeaderOptions[];
   body?: ApiBodyOptions;
   isPublic?: boolean;
+  deviceIdentifier?: boolean;
+  acceptLanguage?: boolean;
   response?: (ApiResponseOptions | number)[];
 };
 
 export function ApiDocs(options?: ApiDocsOptions) {
   const decorators: (MethodDecorator | ClassDecorator)[] = [];
 
-  // Default decorators
-  decorators.push(
-    ApiHeader({ name: 'Accept-Language', required: false, enum: ['en'] }),
-    ApiHeader({ name: 'Device-Identifier', required: true }),
-  );
-
-  // Custom decorators
   if (options?.tags) {
     decorators.push(
       ApiTags(...(Array.isArray(options.tags) ? options.tags : [options.tags])),
@@ -61,6 +56,16 @@ export function ApiDocs(options?: ApiDocsOptions) {
 
   if (options?.isPublic === undefined || !options?.isPublic) {
     decorators.push(ApiBearerAuth());
+  }
+
+  if (options?.deviceIdentifier === undefined || options?.deviceIdentifier) {
+    decorators.push(ApiHeader({ name: 'X-Device-Identifier', required: true }));
+  }
+
+  if (options?.acceptLanguage) {
+    decorators.push(
+      ApiHeader({ name: 'Accept-Language', required: false, enum: ['en'] }),
+    );
   }
 
   if (!options?.response) {

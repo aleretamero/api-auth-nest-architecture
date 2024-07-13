@@ -54,7 +54,7 @@ export class User {
   })
   userCodes?: UserCode[];
 
-  @OneToOne(() => User)
+  @OneToOne(() => PersonalData, (x) => x.user)
   personalData?: PersonalData | null;
 
   constructor(partialEntity: Partial<User>) {

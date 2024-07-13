@@ -82,8 +82,8 @@ export class AuthRefreshGuard implements CanActivate {
   private extractDeviceIdentifierFromHeader(
     request: Request,
   ): string | undefined {
-    return typeof request.headers['device-identifier'] === 'string'
-      ? request.headers['device-identifier']
+    return typeof request.headers['x-device-identifier'] === 'string'
+      ? request.headers['x-device-identifier']
       : undefined;
   }
 }
