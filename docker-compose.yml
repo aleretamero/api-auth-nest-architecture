@@ -1,0 +1,60 @@
+version: '3.1'
+
+services:
+  # server:
+  #   container_name: auth-nestjs
+  #   image: node
+  #   working_dir: /usr/src/clean-node-api
+  #   restart: always
+  #   command: sh -c "npm install --omit=dev && npm run start:prod"
+  #   volumes:
+  #     - ./dist:/usr/src/clean-node-api/dist
+  #     - ./.env:/usr/src/clean-node-api/.env
+  #     - ./package.json:/usr/src/clean-node-api/package.json
+  #   ports:
+  #     - ${PORT}:${PORT}
+  #   depends_on:
+  #     - db
+  #     - db-log
+  #     - cache
+  #     - queue
+
+  db:
+    container_name: auth-nestjs-postgres
+    image: postgres
+    restart: always
+    # volumes:
+    #   - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: auth-nestjs
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  db-log:
+    container_name: auth-nestjs-mongo
+    image: mongo
+    restart: always
+    volumes:
+      - ./data/mongo:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: auth-nestjs
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  cache:
+    container_name: auth-nestjs-redis-cache
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+
+  queue:
+    container_name: auth-nestjs-redis-queue
+    image: redis
+    restart: always
+    ports:
+      - 6380:6379
