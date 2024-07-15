@@ -26,7 +26,7 @@ export const multerOptions: MulterOptions = {
       file: Express.Multer.File,
       callback: (error: Error | null, filename: string) => void,
     ) => {
-      const timestamp = ClockUtil.getTimestamp();
+      const timestamp = ClockUtil.getTimestampMilliseconds();
       const codeString = Code.generate(10);
       const fileName = `${timestamp}_${codeString}.${file.originalname?.split('.').pop()}`;
 

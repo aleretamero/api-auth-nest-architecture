@@ -27,7 +27,7 @@ export class UserCodeService {
 
     const code = Code.generate(6);
     const hashedCode = await this.hashService.hash(code);
-    const expiresIn = ClockUtil.getTimestamp('30m');
+    const expiresIn = ClockUtil.getTimestampMilliseconds('30m');
 
     const userCode = this.typeormService.userCode.create({
       userId,
@@ -85,7 +85,7 @@ export class UserCodeService {
       return false;
     }
 
-    if (userCode.expiresIn < ClockUtil.getTimestamp()) {
+    if (userCode.expiresIn < ClockUtil.getTimestampMilliseconds()) {
       await this.typeormService.userCode.update(userCode.id, {
         status: UserCodeStatus.INVALIDATED,
       });

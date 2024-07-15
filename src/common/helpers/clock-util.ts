@@ -40,11 +40,7 @@ export abstract class ClockUtil {
     }
   }
 
-  static getSeconds(offset: ClockUtil.OffsetString): number {
-    return ClockUtil.getMilliseconds(offset) / 1000;
-  }
-
-  static getTimestamp(offset?: ClockUtil.Offset): number {
+  static getTimestampMilliseconds(offset?: ClockUtil.Offset): number {
     let timestamp = new Date().getTime();
 
     if (offset !== undefined) {
@@ -58,10 +54,5 @@ export abstract class ClockUtil {
     }
 
     return timestamp;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static format(format?: string): string {
-    return new Date().toISOString();
   }
 }
