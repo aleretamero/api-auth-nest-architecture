@@ -5,6 +5,6 @@ export class CreateLogErrorDto {
   errorMessage?: string;
   userId?: string;
   stack?: string;
-  requestHeaders?: string;
-  requestBody?: string;
+  requestHeaders?: any;
+  requestBody?: any;
 }

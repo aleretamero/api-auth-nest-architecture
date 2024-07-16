@@ -14,7 +14,7 @@ import { ID } from '@/common/helpers/id';
 
 @Entity('user_codes')
 export class UserCode {
-  @PrimaryColumn('varchar', { primaryKeyConstraintName: 'USER_CODE_PK' })
+  @PrimaryColumn('varchar')
   id!: string;
 
   @Column('varchar', { name: 'user_id' })
@@ -43,10 +43,7 @@ export class UserCode {
     onUpdate: 'CASCADE',
     deferrable: 'INITIALLY DEFERRED',
   })
-  @JoinColumn({
-    foreignKeyConstraintName: 'USER_CODE_USER_FK',
-    name: 'user_id',
-  })
+  @JoinColumn({ name: 'user_id' })
   user?: User;
 
   constructor(partialEntity: Partial<UserCode>) {

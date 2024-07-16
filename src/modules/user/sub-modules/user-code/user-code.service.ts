@@ -26,13 +26,13 @@ export class UserCodeService {
     );
 
     const code = Code.generate(6);
-    const hashedCode = await this.hashService.hash(code);
+    const codeHash = await this.hashService.hash(code);
     const expiresIn = ClockUtil.getTimestampMilliseconds('30m');
 
     const userCode = this.typeormService.userCode.create({
       userId,
       type,
-      code: hashedCode,
+      code: codeHash,
       expiresIn,
     });
 

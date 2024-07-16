@@ -18,8 +18,8 @@ export namespace WelcomeJob {
 }
 
 @Processor(QUEUE.WELCOME)
-export class AuthWelcomeJob {
-  private readonly logger = new Logger(AuthWelcomeJob.name);
+export class WelcomeJob {
+  private readonly logger = new Logger(WelcomeJob.name);
 
   constructor(private readonly mailService: MailService) {}
 

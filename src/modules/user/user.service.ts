@@ -16,22 +16,25 @@ import { LocalStorageService } from '@/infra/storage/local-storage/local-storage
 import { User } from '@/modules/user/entities/user.entity';
 import { Role } from '@/modules/user/enums/role.enum';
 import { CACHE_KEY, CacheService } from '@/infra/cache/cache.service';
-import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
 import { QUEUE, QueueService } from '@/infra/queue/queue.service';
+import { ClockUtil } from '@/common/helpers/clock-util';
+import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
+import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly typeormService: TypeormService,
+    private readonly userCodeService: UserCodeService,
     private readonly hashService: HashService,
     private readonly i18nService: I18nService,
     private readonly localStorageService: LocalStorageService,
     private readonly cacheService: CacheService,
-    private readonly userCodeService: UserCodeService,
     private readonly queueService: QueueService,
   ) {}
 
   async create(
+    currentUser: User,
     createUserDto: CreateUserDto,
     fileName: string | undefined,
   ): Promise<UserDto> {
@@ -55,24 +58,55 @@ export class UserService {
 
     const passwordHash = await this.hashService.hash(password);
 
+    const roles: Role[] = [Role.USER];
+
+    if (createUserDto.role === Role.ADMIN) {
+      if (!currentUser.roles.includes(Role.SUPER_ADMIN)) {
+        throw new ForbiddenException(
+          this.i18nService.t('user.cannot_create_admin'),
+        );
+      }
+
+      createUserDto.role === Role.ADMIN && roles.push(Role.ADMIN);
+    }
+
     const user = this.typeormService.user.create({
       email: createUserDto.email,
       passwordHash,
+      roles,
       avatarPath: fileName,
       avatarUrl: fileName && this.localStorageService.getUrl(fileName),
     });
 
-    if (fileName) {
-      await this.queueService.saveUserAvatar.add(QUEUE.SAVE_USER_AVATAR, {
-        user,
+    if (createUserDto.personalData) {
+      user.personalData = this.typeormService.personalData.create({
+        userId: user.id,
+        ...createUserDto.personalData,
       });
     }
 
-    await this.queueService.createUser.add({
-      userId: user.id,
-      email: user.email,
-      password,
-    });
+    if (fileName) {
+      await this.queueService.saveUserAvatar.add(
+        QUEUE.SAVE_USER_AVATAR,
+        {
+          user,
+        },
+        {
+          delay: ClockUtil.getTimestampMilliseconds('5s'),
+        },
+      );
+    }
+
+    await this.queueService.sendConfirmationAccount.add(
+      {
+        userId: user.id,
+        email: user.email,
+        password,
+      },
+      {
+        delay: ClockUtil.getTimestampMilliseconds('5s'),
+      },
+    );
 
     await this.typeormService.user.save(user);
 
@@ -82,8 +116,13 @@ export class UserService {
   async findAll(): Promise<UserDto[]> {
     const users = await this.cacheService.execute(
       CACHE_KEY.USERS,
-      async () => await this.typeormService.user.find(),
-      1000,
+      async () =>
+        await this.typeormService.user.find({
+          relations: {
+            personalData: true,
+          },
+        }),
+      // 1000, // TODO - TTL does not work
     );
 
     return users.map((user) => new UserDto(user));
@@ -110,10 +149,6 @@ export class UserService {
     updateUserDto: UpdateUserDto,
     fileName: string | undefined,
   ): Promise<UserDto> {
-    if (!currentUser.roles.includes(Role.ADMIN)) {
-      throw new ForbiddenException();
-    }
-
     let user = await this.typeormService.user.findOne({
       where: { id },
     });
@@ -122,9 +157,29 @@ export class UserService {
       throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
-    if (user.roles.includes(Role.ADMIN) && currentUser.id !== user.id) {
-      throw new BadRequestException(
-        this.i18nService.t('user.cannot_delete_another_admin'),
+    if (user.roles.includes(Role.SUPER_ADMIN)) {
+      throw new ForbiddenException(
+        this.i18nService.t('user.cannot_update_super_admin'),
+      );
+    }
+
+    if (
+      user.roles.includes(Role.ADMIN) &&
+      (!currentUser.roles.includes(Role.SUPER_ADMIN) ||
+        (!currentUser.roles.includes(Role.ADMIN) && currentUser.id !== user.id))
+    ) {
+      throw new ForbiddenException(
+        this.i18nService.t('user.cannot_update_admin'),
+      );
+    }
+
+    if (
+      !currentUser.roles.includes(Role.SUPER_ADMIN) &&
+      !currentUser.roles.includes(Role.ADMIN) &&
+      currentUser.id !== user.id
+    ) {
+      throw new ForbiddenException(
+        this.i18nService.t('user.cannot_update_user'),
       );
     }
 
@@ -146,8 +201,31 @@ export class UserService {
       });
     }
 
-    if (fileName && fileName !== user.avatarPath) {
-      await this.queueService.saveUserAvatar.add({ user });
+    if (updateUserDto.role) {
+      const roles: Role[] = [Role.USER];
+
+      if (updateUserDto.role === Role.ADMIN) {
+        if (!currentUser.roles.includes(Role.SUPER_ADMIN)) {
+          throw new ForbiddenException(
+            this.i18nService.t('user.cannot_update_admin'),
+          );
+        }
+
+        roles.push(Role.ADMIN);
+      }
+
+      user = this.typeormService.user.merge(user, {
+        roles,
+      });
+    }
+
+    if (fileName) {
+      await this.queueService.saveUserAvatar.add(
+        { user },
+        {
+          delay: ClockUtil.getTimestampMilliseconds('5s'),
+        },
+      );
 
       user = this.typeormService.user.merge(user, {
         avatarPath: fileName,
@@ -155,15 +233,31 @@ export class UserService {
       });
     }
 
+    if (updateUserDto.personalData) {
+      user = this.typeormService.user.merge(user, {
+        personalData: {
+          userId: user.id,
+          ...user.personalData,
+          ...updateUserDto.personalData,
+        },
+      });
+    }
+
     if (!user.emailVerified) {
-      // const code = await this.userCodeService.create(
-      //   user.id,
-      //   UserCodeType.EMAIL_VERIFICATION,
-      // );
-      // await this.authNewEmailConfirmationCodeQueue.add({
-      //   email: user.email,
-      //   code,
-      // });
+      const code = await this.userCodeService.create(
+        user.id,
+        UserCodeType.EMAIL_CONFIRMATION,
+      );
+
+      await this.queueService.sendConfirmationAccount.add(
+        {
+          email: user.email,
+          code,
+        },
+        {
+          delay: ClockUtil.getTimestampMilliseconds('5s'),
+        },
+      );
     }
 
     user = await this.typeormService.user.save(user);
@@ -171,59 +265,7 @@ export class UserService {
     return new UserDto(user);
   }
 
-  async updateMe(
-    currentUser: User,
-    updateUserDto: UpdateUserDto,
-    fileName: string | undefined,
-  ): Promise<UserDto> {
-    if (updateUserDto.email && currentUser.email !== updateUserDto.email) {
-      const emailAlreadyExists = await this.typeormService.user.existsBy({
-        id: Not(currentUser.id),
-        email: updateUserDto.email,
-      });
-
-      if (emailAlreadyExists) {
-        throw new BadRequestException(
-          this.i18nService.t('user.email_already_exists'),
-        );
-      }
-
-      currentUser = this.typeormService.user.merge(currentUser, {
-        email: updateUserDto.email,
-        emailVerified: false,
-      });
-    }
-
-    if (fileName && fileName !== currentUser.avatarPath) {
-      await this.queueService.saveUserAvatar.add({ user: currentUser });
-
-      currentUser = this.typeormService.user.merge(currentUser, {
-        avatarPath: fileName,
-        avatarUrl: fileName && this.localStorageService.getUrl(fileName),
-      });
-    }
-
-    if (!currentUser.emailVerified) {
-      // const code = await this.userCodeService.create(
-      //   currentUser.id,
-      //   UserCodeType.EMAIL_VERIFICATION,
-      // );
-      // await this.authNewEmailConfirmationCodeQueue.add({
-      //   email: currentUser.email,
-      //   code,
-      // });
-    }
-
-    currentUser = await this.typeormService.user.save(currentUser);
-
-    return new UserDto(currentUser);
-  }
-
   async delete(currentUser: User, id: string): Promise<void> {
-    if (!currentUser.roles.includes(Role.ADMIN)) {
-      throw new ForbiddenException();
-    }
-
     const user = await this.typeormService.user.findOne({
       where: { id },
     });
@@ -232,9 +274,29 @@ export class UserService {
       throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
-    if (user.roles.includes(Role.ADMIN) && currentUser.id !== user.id) {
-      throw new BadRequestException(
-        this.i18nService.t('user.cannot_delete_another_admin'),
+    if (user.roles.includes(Role.SUPER_ADMIN)) {
+      throw new ForbiddenException(
+        this.i18nService.t('user.cannot_delete_super_admin'),
+      );
+    }
+
+    if (
+      user.roles.includes(Role.ADMIN) &&
+      (!currentUser.roles.includes(Role.SUPER_ADMIN) ||
+        (!currentUser.roles.includes(Role.ADMIN) && currentUser.id !== user.id))
+    ) {
+      throw new ForbiddenException(
+        this.i18nService.t('user.cannot_delete_admin'),
+      );
+    }
+
+    if (
+      !currentUser.roles.includes(Role.SUPER_ADMIN) &&
+      !currentUser.roles.includes(Role.ADMIN) &&
+      currentUser.id !== user.id
+    ) {
+      throw new ForbiddenException(
+        this.i18nService.t('user.cannot_delete_user'),
       );
     }
 
@@ -245,15 +307,5 @@ export class UserService {
     }
 
     await this.typeormService.user.remove(user);
-  }
-
-  async deleteMe(currentUser: User): Promise<void> {
-    if (currentUser.avatarPath) {
-      await this.queueService.removeUserAvatar.add({
-        avatarPath: currentUser.avatarPath,
-      });
-    }
-
-    await this.typeormService.user.remove(currentUser);
   }
 }

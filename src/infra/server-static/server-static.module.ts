@@ -6,7 +6,7 @@ import { ServeStaticModule as NestServeStaticModule } from '@nestjs/serve-static
   imports: [
     NestServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', '..', 'uploads'),
-      serveRoot: '/api/uploads',
+      serveRoot: '/uploads',
     }),
   ],
 })

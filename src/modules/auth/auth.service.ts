@@ -12,7 +12,6 @@ import { AuthRegisterDto } from '@/modules/auth/dtos/auth-register.dto';
 import { UserCodeService } from '@/modules/user/sub-modules/user-code/user-code.service';
 import { UserCodeType } from '@/modules/user/sub-modules/user-code/enums/user-code-type.enum';
 import { AuthConfirmEmailDto } from '@/modules/auth/dtos/auth-confirm-email.dto';
-import { AuthConfirmForgotPasswordDto } from '@/modules/auth/dtos/auth-confirm-forgot-password.dto';
 import { AuthResetPasswordDto } from '@/modules/auth/dtos/auth-reset-password.dto';
 import { I18nService } from '@/infra/i18n/i18n.service';
 import { SessionDto } from '@/modules/user/sub-modules/session/dtos/session.dto';
@@ -53,7 +52,7 @@ export class AuthService {
 
     const code = await this.userCodeService.create(
       user.id,
-      UserCodeType.EMAIL_VERIFICATION,
+      UserCodeType.EMAIL_CONFIRMATION,
     );
 
     await this.queueService.welcome.add({ code, email: user.email });
@@ -110,9 +109,15 @@ export class AuthService {
       throw new NotFoundException(this.i18nService.t('user.not_found'));
     }
 
+    if (user.emailVerified) {
+      throw new BadRequestException(
+        this.i18nService.t('auth.email_already_verified'),
+      );
+    }
+
     const isValid = await this.userCodeService.confirm(
       user.id,
-      UserCodeType.EMAIL_VERIFICATION,
+      UserCodeType.EMAIL_CONFIRMATION,
       authConfirmEmailDto.code,
     );
 
@@ -127,7 +132,33 @@ export class AuthService {
     });
   }
 
-  async newConfirmEmailCode(email: string): Promise<void> {
+  async resendConfirmationAccount(email: string): Promise<void> {
+    const user = await this.typeormService.user.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException(this.i18nService.t('user.not_found'));
+    }
+
+    if (user.emailVerified) {
+      throw new BadRequestException(
+        this.i18nService.t('auth.email_already_verified'),
+      );
+    }
+
+    const code = await this.userCodeService.create(
+      user.id,
+      UserCodeType.EMAIL_CONFIRMATION,
+    );
+
+    await this.queueService.resendConfirmationAccount.add({
+      email: user.email,
+      code,
+    });
+  }
+
+  async forgotPassword(email: string): Promise<void> {
     const user = await this.typeormService.user.findOne({
       where: { email },
     });
@@ -138,10 +169,10 @@ export class AuthService {
 
     const code = await this.userCodeService.create(
       user.id,
-      UserCodeType.EMAIL_VERIFICATION,
+      UserCodeType.FORGOT_PASSWORD,
     );
 
-    await this.queueService.newEmailConfirmationCode.add({
+    await this.queueService.forgotPassword.add({
       email: user.email,
       code,
     });
@@ -180,52 +211,6 @@ export class AuthService {
     });
 
     return await this.sessionService.create(user, deviceIdentifier);
-  }
-
-  async newForgotPasswordCode(email: string): Promise<void> {
-    const user = await this.typeormService.user.findOne({
-      where: { email },
-    });
-
-    if (!user) {
-      throw new NotFoundException(this.i18nService.t('user.not_found'));
-    }
-
-    const code = await this.userCodeService.create(
-      user.id,
-      UserCodeType.FORGOT_PASSWORD,
-    );
-
-    await this.queueService.forgotPassword.add({
-      email: user.email,
-      code,
-    });
-  }
-
-  async verifyForgotPasswordCode(
-    authConfirmForgotPasswordDto: AuthConfirmForgotPasswordDto,
-  ): Promise<void> {
-    const user = await this.typeormService.user.findOne({
-      where: {
-        email: authConfirmForgotPasswordDto.email,
-      },
-    });
-
-    if (!user) {
-      throw new NotFoundException(this.i18nService.t('user.not_found'));
-    }
-
-    const isValid = await this.userCodeService.isValid(
-      user.id,
-      UserCodeType.FORGOT_PASSWORD,
-      authConfirmForgotPasswordDto.code,
-    );
-
-    if (!isValid) {
-      throw new BadRequestException(
-        this.i18nService.t('user.user_code.invalid'),
-      );
-    }
   }
 
   async me(id: string): Promise<UserDto> {

@@ -16,15 +16,15 @@ export class CacheService {
   async execute<T>(
     key: string,
     callback: () => Promise<T>,
-    ttl?: number,
+    // ttl?: number,
   ): Promise<T> {
-    const cachedValue = await this.cacheManager.get<T>(key);
+    // const cachedValue = await this.cacheManager.get<T>(key);
 
-    if (cachedValue) return cachedValue;
+    // if (cachedValue) return cachedValue;
 
     const value = await callback();
 
-    await this.cacheManager.set(key, value, ttl);
+    // await this.cacheManager.set(key, value, ttl);
 
     return value;
   }

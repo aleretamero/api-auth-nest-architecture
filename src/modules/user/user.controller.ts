@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from '@/modules/user/user.service';
 import { UserDto } from '@/modules/user/dtos/user.dto';
-import { UseInterceptorFile } from '@/common/decorators/use-file-interceptor.decorator';
+import { UseInterceptorFile } from '@/common/decorators/use-interceptor-file.decorator';
 import { File } from '@/infra/storage/supabase/supabase.service';
 import { ParseFilePipe } from '@/common/pipes/parse-file-pipe';
 import { Roles } from '@/common/decorators/roles.decorator';
@@ -28,14 +28,15 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @UseInterceptorFile('file')
   @ApiDocs({ tags: 'users', response: [400, 401] })
   async create(
+    @CurrentUser() currentUser: User,
     @Body() body: CreateUserDto,
     @UploadedFile(new ParseFilePipe({ isRequired: false })) file?: File,
   ): Promise<UserDto> {
-    return this.userService.create(body, file?.filename);
+    return this.userService.create(currentUser, body, file?.filename);
   }
 
   @Get()
@@ -50,19 +51,7 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-  @Patch('me')
-  @UseInterceptorFile('file')
-  @ApiDocs({ tags: 'users', response: [400, 401, 404] })
-  async updateMe(
-    @CurrentUser() currentUser: User,
-    @Body() body: UpdateUserDto,
-    @UploadedFile(new ParseFilePipe({ isRequired: false })) file?: File,
-  ): Promise<UserDto> {
-    return this.userService.updateMe(currentUser, body, file?.filename);
-  }
-
   @Patch(':id')
-  @Roles(Role.ADMIN)
   @UseInterceptorFile('file')
   @ApiDocs({ tags: 'users', response: [400, 401, 404] })
   async update(
@@ -74,15 +63,7 @@ export class UserController {
     return this.userService.update(currentUser, id, body, file?.filename);
   }
 
-  @Delete('me')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiDocs({ tags: 'users', response: [401] })
-  async deleteMe(@CurrentUser() currentUser: User): Promise<void> {
-    return this.userService.deleteMe(currentUser);
-  }
-
   @Delete(':id')
-  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiDocs({ tags: 'users', response: [401, 403, 404] })
   async delete(

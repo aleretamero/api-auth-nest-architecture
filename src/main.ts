@@ -11,15 +11,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('BootstrapApplication');
 
-  app.setGlobalPrefix('api');
-
   corsSetup(app);
   swaggerSetup(app);
   globalSetup(app);
 
   await app.listen(environment.PORT, () => {
     logger.verbose(
-      `Server running http://localhost:${environment.PORT}/api/health`,
+      `Server running http://localhost:${environment.PORT}/health`,
     );
   });
 }

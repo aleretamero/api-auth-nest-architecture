@@ -16,11 +16,11 @@ import { Role } from '@/modules/user/enums/role.enum';
 
 @Entity('users')
 export class User {
-  @PrimaryColumn('varchar', { primaryKeyConstraintName: 'USER_PK' })
+  @PrimaryColumn('varchar')
   id!: string;
 
   @Column('varchar')
-  @Unique('USER_EMAIL_UK', ['email'])
+  @Unique(['email'])
   email!: string;
 
   @Column('varchar', { name: 'password_hash' })
@@ -54,7 +54,9 @@ export class User {
   })
   userCodes?: UserCode[];
 
-  @OneToOne(() => PersonalData, (x) => x.user)
+  @OneToOne(() => PersonalData, (x) => x.user, {
+    cascade: true,
+  })
   personalData?: PersonalData | null;
 
   constructor(partialEntity: Partial<User>) {

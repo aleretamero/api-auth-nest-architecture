@@ -5,15 +5,14 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { ID } from '@/common/helpers/id';
 import { User } from '@/modules/user/entities/user.entity';
 
-@Entity('users/personal_data')
+@Entity('personal_data')
 export class PersonalData {
-  @PrimaryColumn({ primaryKeyConstraintName: 'PERSONAL_DATA_PK' })
+  @PrimaryColumn('varchar')
   id!: string;
 
   @Column({ name: 'first_name' })
@@ -31,7 +30,6 @@ export class PersonalData {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
 
-  @Unique('PERSONAL_DATA_USER_UK', ['user_id'])
   @Column({ name: 'user_id' })
   userId!: string;
 
@@ -40,10 +38,7 @@ export class PersonalData {
     onUpdate: 'CASCADE',
     deferrable: 'INITIALLY DEFERRED',
   })
-  @JoinColumn({
-    foreignKeyConstraintName: 'PERSONAL_DATA_USER_FK',
-    name: 'user_id',
-  })
+  @JoinColumn({ name: 'userId' })
   user?: User;
 
   constructor(partialEntity: Partial<PersonalData>) {

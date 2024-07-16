@@ -18,7 +18,7 @@ export namespace CreateUserJob {
   };
 }
 
-@Processor(QUEUE.CREATE_USER)
+@Processor(QUEUE.SEND_CONFIRMATION_ACCOUNT)
 export class CreateUserJob {
   private readonly logger = new Logger(CreateUserJob.name);
 
@@ -27,7 +27,7 @@ export class CreateUserJob {
     // private readonly userCodeService: UserCodeService,
   ) {}
 
-  @Process(QUEUE.CREATE_USER)
+  @Process(QUEUE.SEND_CONFIRMATION_ACCOUNT)
   public async process({ data }: Job<CreateUserJob.Data>): Promise<void> {
     // const code = await this.userCodeService.create(
     //   data.userId,

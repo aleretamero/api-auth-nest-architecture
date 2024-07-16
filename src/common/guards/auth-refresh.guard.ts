@@ -74,8 +74,8 @@ export class AuthRefreshGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    return typeof request.headers['refresh-token'] === 'string'
-      ? request.headers['refresh-token']
+    return typeof request.headers['x-refresh-token'] === 'string'
+      ? request.headers['x-refresh-token']
       : undefined;
   }
 

@@ -16,7 +16,11 @@ export class LogErrorService {
       userId: createLogErrorDto.userId,
       stack: createLogErrorDto.stack,
       requestHeaders: JSON.stringify(createLogErrorDto.requestHeaders, null, 2),
-      requestBody: JSON.stringify(createLogErrorDto.requestBody, null, 2),
+      requestBody: JSON.stringify(
+        this.removePasswordFromRequestBody(createLogErrorDto.requestBody),
+        null,
+        2,
+      ),
       timestamp: new Date().toISOString(),
     });
   }
@@ -27,5 +31,32 @@ export class LogErrorService {
       .sort({ timestamp: order })
       .limit(limit)
       .skip(offset);
+  }
+
+  private removePasswordFromRequestBody<T extends Record<string, any>>(
+    data?: T,
+  ) {
+    if (!data) {
+      return data;
+    }
+
+    for (const key in data) {
+      if (
+        key.toLowerCase().includes('password') &&
+        typeof data[key] === 'string'
+      ) {
+        (data[key] as string) = '*'.repeat(8);
+        continue;
+      }
+
+      if (typeof data[key] === 'object') {
+        (data[key] as any) = this.removePasswordFromRequestBody(data[key]);
+        continue;
+      }
+
+      data[key] = data[key];
+    }
+
+    return data;
   }
 }

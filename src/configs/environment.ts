@@ -27,8 +27,8 @@ const schema = z.object({
     .transform((value) => value.split(/[,]/).filter(Boolean))
     .refine((array) => z.array(z.string().url()).safeParse(array).success)
     .optional(),
-  SUPABASE_URL: z.string().url(),
-  SUPABASE_SERVICE_ROLE: z.string(),
+  SUPABASE_URL: z.string().url().optional(),
+  SUPABASE_SERVICE_ROLE: z.string().optional(),
   MAIL_HOST: z.string(),
   MAIL_PORT: z.coerce.number(),
   MAIL_USER: z.string(),

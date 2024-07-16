@@ -15,7 +15,6 @@ import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { IsPublic } from '@/common/decorators/is-public.decorator';
 import { AuthRefreshGuard } from '@/common/guards/auth-refresh.guard';
 import { AuthService } from '@/modules/auth/auth.service';
-import { AuthConfirmForgotPasswordDto } from '@/modules/auth/dtos/auth-confirm-forgot-password.dto';
 import { AuthResetPasswordDto } from '@/modules/auth/dtos/auth-reset-password.dto';
 import { AuthConfirmEmailDto } from '@/modules/auth/dtos/auth-confirm-email.dto';
 import { AuthLoginDto } from '@/modules/auth/dtos/auth-login.dto';
@@ -27,7 +26,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  @HttpCode(HttpStatus.CREATED)
   @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400] })
   async register(
@@ -75,17 +73,17 @@ export class AuthController {
     return this.authService.refresh(deviceIdentifier, user);
   }
 
-  @Post('email/new-code')
+  @Post('resend-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400, 404] })
-  async newEmailCode(
+  async resendConfirmation(
     @Body('email', ParseEmailPipe) email: string,
   ): Promise<void> {
-    return this.authService.newConfirmEmailCode(email);
+    return this.authService.resendConfirmationAccount(email);
   }
 
-  @Post('email/confirm')
+  @Post('confirm-email')
   @HttpCode(HttpStatus.NO_CONTENT)
   @IsPublic()
   @ApiDocs({ isPublic: true, tags: 'auth', response: [400] })
@@ -100,17 +98,7 @@ export class AuthController {
   async forgotPassword(
     @Body('email', ParseEmailPipe) email: string,
   ): Promise<void> {
-    return this.authService.newForgotPasswordCode(email);
-  }
-
-  @Post('forgot-password/verify')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @IsPublic()
-  @ApiDocs({ isPublic: true, tags: 'auth', response: [400] })
-  async verifyForgotPasswordCode(
-    @Body() body: AuthConfirmForgotPasswordDto,
-  ): Promise<void> {
-    return this.authService.verifyForgotPasswordCode(body);
+    return this.authService.forgotPassword(email);
   }
 
   @Post('reset-password')

@@ -1,5 +1,5 @@
 export const UserCodeType = {
-  EMAIL_VERIFICATION: 1,
+  EMAIL_CONFIRMATION: 1,
   FORGOT_PASSWORD: 2,
 };
 

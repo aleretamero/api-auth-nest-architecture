@@ -74,7 +74,7 @@ export class AuthGuard implements CanActivate {
       if (!isMatch) throw new UnauthorizedException();
 
       request.user = session.user;
-    } catch {
+    } catch (error) {
       throw new UnauthorizedException();
     }
 

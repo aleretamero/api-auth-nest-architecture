@@ -5,7 +5,6 @@ import { UserController } from '@/modules/user/user.controller';
 import { CreateUserJob } from '@/modules/user/jobs/create-user.job';
 import { HashModule } from '@/infra/hash/hash.module';
 import { QueueModule } from '@/infra/queue/queue.module';
-import { PersonalDataModule } from '@/modules/user/sub-modules/personal-data/personal-data.module';
 import { UserService } from '@/modules/user/user.service';
 import { MailModule } from '@/infra/mail/mail.module';
 import { SaveUserAvatarJob } from '@/modules/user/jobs/save-user-avatar.job';
@@ -23,7 +22,6 @@ import { RemoveUserAvatarJob } from '@/modules/user/jobs/remove-user-avatar.job'
     LocalStorageModule,
     SessionModule,
     UserCodeModule,
-    PersonalDataModule,
     CacheModule,
   ],
   controllers: [UserController],

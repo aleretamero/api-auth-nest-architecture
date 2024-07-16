@@ -7,7 +7,7 @@ import { GetErrosLogQuery } from '@/infra/logging/log-error/queries/get-errors-l
 
 @ApiExcludeController()
 @Controller('log-errors')
-@Roles(Role.ADMIN)
+@Roles(Role.SUPER_ADMIN, Role.ADMIN)
 export class LogErrorController {
   constructor(private readonly logErrorService: LogErrorService) {}
 
