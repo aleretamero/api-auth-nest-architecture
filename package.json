@@ -19,8 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm:datasource": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d src/infra/database/postgres/typeorm-datasource.ts",
-    "migrate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d src/infra/database/postgres/typeorm-datasource.ts migration:generate src/infra/database/postgres/migrations/migration",
+    "migrate": "typeorm migration:create src/infra/database/postgres/migrations/migration",
+    "migrate:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d src/infra/database/postgres/typeorm-datasource.ts migration:generate src/infra/database/postgres/migrations/migration",
     "migrate:up": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d src/infra/database/postgres/typeorm-datasource.ts migration:run",
     "migrate:down": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d src/infra/database/postgres/typeorm-datasource.ts migration:revert"
   },
