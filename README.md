@@ -1,73 +1,183 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Projeto Auth NestJs
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![preview](https://auth-nestjs.vercel.app/assets/images/preview.webp)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 💭 Descrição
 
-## Description
+## 🧠 Funcionalidades
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+✔️ **Registro de Usuário**
 
-## Installation
+✔️ **Login e Logout de Usuário**
+
+✔️ **Refresh Token**
+
+✔️ **Verificar se o email é válido**
+
+✔️ **Recuperar de Senha**
+
+✔️ **CRUD de Usuários**
+
+✔️ **CRUD de Dados Pessoais**
+
+✔️ **Armazenamento local de arquivos**
+
+✔️ **Integração com Supabase (Storage)**
+
+✔️ **Integração com CacheManager**
+
+✔️ **Integração com NestI18n**
+
+✔️ **Integração com NestMailer (Nodemailer)**
+
+✔️ **Integração com Bull**
+
+✔️ **Integração com Postgres (TypeORM), MongoDB (Mongoose) e Redis (CacheManager e Bull)**
+
+✔️ **Integração com Bcrypt e JWT**
+
+✔️ **Rate Limiting**
+
+✔️ **Server Static**
+
+
+## 🖥️ Tecnologias Utilizadas
+
+- [TypeScript](https://www.typescriptlang.org) - superset, linguagem baseada em javascript
+- [NodeJs](https://nodejs.org/pt) - ambiente de execução JavaScript para várias plataformas.
+- [Nestjs](https://docs.nestjs.com) - framework para aplicações NodeJs.
+- [Docker](https://www.docker.com) -
+- [TypeORM](https://typeorm.io) -
+- [PostgreSQL](https://www.postgresql.org) -
+- [Mongoose](https://mongoosejs.com) - é uma biblioteca de modelagem de objetos.
+- [MongoDB](https://www.mongodb.com/pt-br) - banco de dados NoSQL
+- [Redis](https://redis.io/) -
+- [Prettier](https://prettier.io) - Formatador de código que mantém um estilo de código consistente.
+- [ESLint](https://eslint.org) - Ferramenta de linting para identificar e corrigir problemas no código.
+- [Bcrypt](https://github.com/kelektiv/node.bcrypt.js) - é uma biblioteca de hash de senhas
+- [JsonWebToken](https://jwt.io) - é um formato compacto e autenticado de representar informações em sistemas web para autenticação e autorização.
+- [Swagger](https://swagger.io) - é uma estrutura de código aberto para a documentação, criação e teste de APIs REST.
+- [Handlebars](https://handlebarsjs.com) -
+
+## 🛠️ Modificando o projeto
+
+### Siga as seguintes instruções para instalar e poder modificar o projeto em sua máquina:
+
+### 📋 Pré-requisitos:
+
+Para baixar, executar e modificar o projeto, você precisa ter instalado em sua máquina:
+
+- [Node](https://nodejs.org/en)
+- [Docker](https://www.docker.com/products/docker-desktop)
+- Um gerenciador de pacotes, como o [PNPM](https://pnpm.io), [Npm](https://nodejs.org/en/) ou [Yarn](https://classic.yarnpkg.com/lang/en/docs/install)
+- [Git](https://git-scm.com/downloads)
+- Editor de código ou IDE, como o [VSCode](https://code.visualstudio.com/Download)
+
+### 🔧 Instalação e execução
+
+1. Clone o repositório
 
 ```bash
-$ yarn install
+git clone https://github.com/aleretamero/auth-nestjs.git
 ```
 
-## Running the app
+2. Acesse a pasta do projeto
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+cd auth-nestjs
 ```
 
-## Test
+3. Instale as dependências
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+npm install
+# ou
+pnpm install
+# ou
+yarn install
 ```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+4. Copie o arquivo `.env.example` e crie um arquivo `.env` na raiz do projeto colocando as variáveis com os valores corretos:
+```env
+  # General
+  BASE_URL=http://localhost:3333
+  NODE_ENV=development
+  PORT=3333
 
-## Stay in touch
+  # Frontend
+  FRONTEND_URL=
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+  # JWT
+  JWT_SECRET=some-secret
 
-## License
+  # CORS
+  CORS_WHITE_LIST=http://localhost:3333
 
-Nest is [MIT licensed](LICENSE).
+  # Postgres
+  POSTGRES_HOST=localhost
+  POSTGRES_PORT=5432
+  POSTGRES_USER=postgres
+  POSTGRES_PASS=postgres
+  POSTGRES_DB=auth-nestjs
+  POSTGRES_SSL=disable
+
+  # MongoDB
+  MONGO_HOST=localhost
+  MONGO_PORT=27017
+  MONGO_USER=root
+  MONGO_PASS=root
+  MONGO_DB=auth-nestjs
+  MONGO_URI=mongodb://root:root@localhost:27017
+
+  # Supabase
+  SUPABASE_URL=
+  SUPABASE_SERVICE_ROLE=
+
+  # Mail
+  MAIL_HOST=
+  MAIL_PORT=
+  MAIL_USER=
+  MAIL_PASS=
+
+  # Cache
+  CACHE_REDIS_HOST=localhost
+  CACHE_REDIS_PORT=6379
+
+  # Queue
+  QUEUE_REDIS_HOST=localhost
+  QUEUE_REDIS_PORT=6380
+
+  # API Portfolio
+  API_PORTFOLIO_URL=
+  API_PORTFOLIO_TOKEN=
+  API_PORTFOLIO_PROJECT_ID=
+```
+
+ ***insira os valores das variáveis vazias.***
+
+5. Crie o container no docker com
+
+```bash
+docker compose up -d
+```
+
+6. Inicie o servidor de desenvolvimento do projeto
+
+```bash
+npm run dev
+# ou
+pnpm dev
+# ou
+yarn dev
+```
+
+## Colaboradores 🤝🤝
+
+| Foto                                                       | Nome                                                 |
+| ---------------------------------------------------------- | ---------------------------------------------------- |
+| <img src="https://github.com/aleretamero.png" width="100"> | [Alexandre Retamero](https://github.com/aleretamero) |
+
+## Licença
+
+[MIT](https://choosealicense.com/licenses/mit/)
