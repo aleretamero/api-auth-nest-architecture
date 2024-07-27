@@ -4,41 +4,43 @@
 
 ## 💭 Descrição
 
+O Projeto Auth NestJs é uma aplicação backend desenvolvida com o framework NestJS. Ele oferece uma solução completa para autenticação e autorização de usuários. A aplicação também integra diversas tecnologias para armazenamento de dados, gerenciamento de cache, envio de emails e internacionalização, visando proporcionar uma experiência robusta e escalável.
+
 ## 🧠 Funcionalidades
 
-✔️ **Registro de Usuário**
+✔️ **Registro de Usuário** - Serviço para criação de usuário.
 
-✔️ **Login e Logout de Usuário**
+✔️ **Login e Logout de Usuário** - Os usuários podem se autenticar no sistema através do login e encerrar a sessão com logout.
 
-✔️ **Refresh Token**
+✔️ **Refresh Token** - Sistema de renovação de tokens para manter a sessão do usuário ativa sem a necessidade de login constante.
 
-✔️ **Verificar se o email é válido**
+✔️ **Verificar se o email é válido** - Serviço para verificar a validade de endereços de email fornecidos pelos usuários.
 
-✔️ **Recuperar de Senha**
+✔️ **Recuperar de Senha** - Funcionalidade para que os usuários possam recuperar suas senhas esquecidas.
 
-✔️ **CRUD de Usuários**
+✔️ **CRUD de Usuários** - Operações de criação, leitura, atualização e exclusão de dados dos usuários.
 
-✔️ **CRUD de Dados Pessoais**
+✔️ **CRUD de Dados Pessoais** - Gerenciamento de dados pessoais dos usuários, incluindo criação, leitura, atualização e exclusão.
 
-✔️ **Armazenamento local de arquivos**
+✔️ **Armazenamento local de arquivos** - Permite o armazenamento de arquivos no servidor local.
 
-✔️ **Integração com Supabase (Storage)**
+✔️ **Integração com Supabase (Storage)** - Integração para armazenamento de arquivos utilizando Supabase.
 
-✔️ **Integração com CacheManager**
+✔️ **Integração com CacheManager** - Integração para gerenciamento de cache, melhorando a performance da aplicação.
 
-✔️ **Integração com NestI18n**
+✔️ **Integração com NestI18n** - Suporte a internacionalização (i18n) utilizando o módulo NestI18n.
 
-✔️ **Integração com NestMailer (Nodemailer)**
+✔️ **Integração com NestMailer (Nodemailer)** - Envio de emails utilizando o NestMailer, que é uma integração com o Nodemailer.
 
-✔️ **Integração com Bull**
+✔️ **Integração com Bull** - Gerenciamento de filas de tarefas utilizando o Bull.
 
-✔️ **Integração com Postgres (TypeORM), MongoDB (Mongoose) e Redis (CacheManager e Bull)**
+✔️ **Integração com Postgres (TypeORM), MongoDB (Mongoose) e Redis (CacheManager e Bull)** - Suporte a múltiplos bancos de dados e tecnologias de armazenamento, incluindo Postgres com TypeORM, MongoDB com Mongoose, e Redis para cache e gerenciamento de filas.
 
-✔️ **Integração com Bcrypt e JWT**
+✔️ **Integração com Bcrypt e JWT** - Uso de Bcrypt para hashing de senhas e JWT para autenticação de usuários.
 
-✔️ **Rate Limiting**
+✔️ **Rate Limiting** - Limitação de taxa para controlar o número de requisições que um usuário pode fazer em um determinado período de tempo.
 
-✔️ **Server Static**
+✔️ **Server Static** - Serviço para servir arquivos estáticos.
 
 
 ## 🖥️ Tecnologias Utilizadas
@@ -46,18 +48,18 @@
 - [TypeScript](https://www.typescriptlang.org) - superset, linguagem baseada em javascript
 - [NodeJs](https://nodejs.org/pt) - ambiente de execução JavaScript para várias plataformas.
 - [Nestjs](https://docs.nestjs.com) - framework para aplicações NodeJs.
-- [Docker](https://www.docker.com) -
-- [TypeORM](https://typeorm.io) -
-- [PostgreSQL](https://www.postgresql.org) -
-- [Mongoose](https://mongoosejs.com) - é uma biblioteca de modelagem de objetos.
-- [MongoDB](https://www.mongodb.com/pt-br) - banco de dados NoSQL
-- [Redis](https://redis.io/) -
+- [Docker](https://www.docker.com) - plataforma para desenvolver, enviar e executar aplicações em contêineres.
+- [TypeORM](https://typeorm.io) - ORM (Object Relational Mapper) para TypeScript e JavaScript.
+- [PostgreSQL](https://www.postgresql.org) - sistema de gerenciamento de banco de dados objeto-relacional.
+- [Mongoose](https://mongoosejs.com) - biblioteca de modelagem de objetos para MongoDB e Node.js.
+- [MongoDB](https://www.mongodb.com/pt-br) - banco de dados NoSQL, orientado a documentos.
+- [Redis](https://redis.io/) - armazenamento de estrutura de dados em memória, utilizado como banco de dados, cache e message broker.
 - [Prettier](https://prettier.io) - Formatador de código que mantém um estilo de código consistente.
 - [ESLint](https://eslint.org) - Ferramenta de linting para identificar e corrigir problemas no código.
 - [Bcrypt](https://github.com/kelektiv/node.bcrypt.js) - é uma biblioteca de hash de senhas
 - [JsonWebToken](https://jwt.io) - é um formato compacto e autenticado de representar informações em sistemas web para autenticação e autorização.
 - [Swagger](https://swagger.io) - é uma estrutura de código aberto para a documentação, criação e teste de APIs REST.
-- [Handlebars](https://handlebarsjs.com) -
+- [Handlebars](https://handlebarsjs.com) - motor de templates JavaScript para criar templates sem lógica embarcada.
 
 ## 🛠️ Modificando o projeto
 
@@ -91,10 +93,6 @@ cd auth-nestjs
 
 ```bash
 npm install
-# ou
-pnpm install
-# ou
-yarn install
 ```
 
 
@@ -166,10 +164,6 @@ docker compose up -d
 
 ```bash
 npm run dev
-# ou
-pnpm dev
-# ou
-yarn dev
 ```
 
 ## Colaboradores 🤝🤝
