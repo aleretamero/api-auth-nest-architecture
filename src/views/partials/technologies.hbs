@@ -1,0 +1,13 @@
+<section class='technologies'>
+  <h2>Tecnologias utilizadas no projeto</h2>
+  <ul class='list-technologies'>
+    {{#each project.technologies}}
+      <li>
+        <img src={{this.iconColorUrl}} alt={{this.name}} />
+        <span>
+          {{this.name}}
+        </span>
+      </li>
+    {{/each}}
+  </ul>
+</section>
