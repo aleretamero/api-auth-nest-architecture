@@ -36,8 +36,8 @@ services:
     container_name: auth-nestjs-mongo
     image: mongo
     restart: always
-    volumes:
-      - ./data/mongo:/data/db
+    # volumes:
+    #   - ./data/mongo:/data/db
     ports:
       - 27017:27017
     environment:
