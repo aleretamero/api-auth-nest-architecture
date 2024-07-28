@@ -61,6 +61,129 @@ O Projeto Auth NestJs é uma aplicação backend desenvolvida com o framework Ne
 - [Swagger](https://swagger.io) - é uma estrutura de código aberto para a documentação, criação e teste de APIs REST.
 - [Handlebars](https://handlebarsjs.com) - motor de templates JavaScript para criar templates sem lógica embarcada.
 
+## 📂 Esquema de pastas
+```
+./src
+├── @types
+├── common
+│   ├── decorators
+│   ├── dtos
+│   ├── exception-filters
+│   ├── guards
+│   ├── helpers
+│   ├── pipes
+│   ├── swagger
+│   └── validators
+├── configs
+├── infra
+│   ├── cache
+│   ├── database
+│   │   ├── mongo
+│   │   └── postgres
+│   │       └── migrations
+│   ├── hash
+│   ├── i18n
+│   │   ├── locales
+│   │   │   └── en
+│   │   └── protocols
+│   ├── jwt
+│   ├── logging
+│   │   └── log-error
+│   │       ├── dtos
+│   │       ├── models
+│   │       └── queries
+│   ├── mail
+│   ├── queue
+│   ├── rate-limiting
+│   ├── server-static
+│   └── storage
+│       ├── local-storage
+│       └── supabase
+├── modules
+│   ├── auth
+│   │   ├── dtos
+│   │   └── jobs
+│   ├── health
+│   └── user
+│       ├── dtos
+│       ├── entities
+│       ├── enums
+│       ├── jobs
+│       └── sub-modules
+│           ├── personal-data
+│           │   ├── dto
+│           │   └── entities
+│           ├── session
+│           │   ├── dtos
+│           │   └── entities
+│           └── user-code
+│               ├── entities
+│               └── enums
+└── views
+    ├── layouts
+    └── partials
+```
+
+## 📝 Resumo da Estrutura
+
+- @**types**: Tipos personalizados utilizados na aplicação.
+- **common**: 
+  - **decorators**: Decoradores personalizados.
+  - **dtos**: Objetos de Transferência de Dados (DTOs).
+  - **exception-filters**: Filtros de exceções.
+  - **guards**: Guardas de rota.
+  - **helpers**: Funções auxiliares e utilitários.
+  - **pipes**: Pipes personalizados para transformação e validação.
+  - **swagger**: Configurações e documentos Swagger.
+  - **validators**: Validadores personalizados.
+- **configs**: Arquivos de configuração.
+- **infra**: Modulos de Infraestrutura da aplicação.
+  - **cache**: Configuração e gerenciamento de cache.
+  - **database**: Configuração de bancos de dados.
+    - **mongo**: Configuração para MongoDB.
+    - **postgres**: Configuração para PostgreSQL, incluindo migrações.
+  - **hash**: Configuração para hashing de senhas.
+  - **i18n**: Internacionalização.
+    - **locales**: Arquivos de tradução.
+      - **en**: Traduções em inglês.
+    - **protocols**: Protocolos de internacionalização.
+  - **jwt**: Configuração de JSON Web Tokens.
+  - **logging**: Configuração de logs.
+    - **log-error**: Logs de erro.
+      - **dtos**: DTOs para logs de erro.
+      - **models**: Modelos para logs de erro.
+      - **queries**: Consultas para logs de erro.
+  - **mail**: Configuração para envio de emails.
+  - **queue**: Configuração de filas de tarefas.
+  - **rate-limiting**: Limitação de taxa de requisições.
+  - **server-static**: Arquivos estáticos do servidor.
+  - **storage**: Armazenamento de arquivos.
+    - **local-storage**: Armazenamento local.
+    - **supabase**: Integração com Supabase.
+- **modules**: Módulos da aplicação.
+  - **auth**: Módulo de autenticação.
+    - **dtos**: DTOs para autenticação.
+    - **jobs**: Tarefas relacionadas à autenticação.
+  - **health**: Módulo de verificação de saúde da aplicação.
+- **user**: Módulo de gerenciamento de usuários.
+  - **dtos**: DTOs para usuários.
+  - **entities**: Entidades de usuários.
+  - **enums**: Enumerações para usuários.
+  - **jobs**: Tarefas relacionadas a usuários.
+  - **sub-modules**: Submódulos do módulo de usuário.
+    - **personal-data**: Dados pessoais dos usuários.
+      - **dto**: DTOs para dados pessoais.
+      - **entities**: Entidades de dados pessoais.
+    - **session**: Sessões de usuário.
+      - **dtos**: DTOs para sessões.
+      - **entities**: Entidades de sessões.
+    - **user-code**: Códigos de usuário (ex**: confirmação de e-mail).
+      - **entities**: Entidades de códigos de usuário.
+      - **enums**: Enumerações para códigos de usuário.
+- **views**: Visualizações da aplicação.
+  - **layouts**: Layouts de visualização.
+  - **partials**: Partes reutilizáveis das visualizações.
+
 ## 🛠️ Modificando o projeto
 
 ### Siga as seguintes instruções para instalar e poder modificar o projeto em sua máquina:
