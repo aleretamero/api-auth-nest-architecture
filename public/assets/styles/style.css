@@ -98,6 +98,50 @@ svg {
   width: 100%;
 }
 
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 3rem;
+  border-radius: 1rem;
+  background: #030712;
+  width: 100%;
+  z-index: 1;
+  margin: 1rem 0 3rem 0;
+}
+
+.features h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+
+.list-features {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 1rem;
+  list-style: none;
+}
+
+.list-features li {
+  width: 100%;
+}
+
+.list-features strong {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-right: .5rem;
+}
+
+.list-features span {
+  display: inline;
+  font-size: 1rem;
+  color: #bbbbbb;
+}
+
 .technologies {
   display: flex;
   flex-direction: column;
@@ -107,6 +151,7 @@ svg {
   background: #030712;
   width: 100%;
   z-index: 1;
+  margin: 1rem 0 3rem 0;
 }
 
 .technologies h2 {

@@ -1,0 +1,11 @@
+<section class='features'>
+  <h2>Funcionalidades</h2>
+  <ul class='list-features'>
+    {{#each project.features}}
+      <li>
+        <strong>{{this.name}}</strong>
+        <span>{{this.description}}</span>
+      </li>
+    {{/each}}
+  </ul>
+</section>
