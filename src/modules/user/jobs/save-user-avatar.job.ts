@@ -52,6 +52,7 @@ export class SaveUserAvatarJob {
       });
 
       await userRepository.save(data.user);
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();

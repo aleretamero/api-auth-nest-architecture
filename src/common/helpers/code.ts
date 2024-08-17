@@ -1,6 +1,6 @@
-import { Objects } from '@/common/helpers/objects';
-import { Random } from '@/common/helpers/random';
-import { Shuffle } from '@/common/helpers/shuffle';
+import { Objects } from './objects';
+import { Random } from './random';
+import { Shuffle } from './shuffle';
 
 export namespace Code {
   export type GenerateOptions = {

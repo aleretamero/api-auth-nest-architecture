@@ -27,4 +27,4 @@ export default [
   I18nModule,
   RateLimitingModule,
   ServeStaticModule,
-] as Type<any>[];
+] as Type[];

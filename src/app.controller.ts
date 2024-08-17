@@ -1,8 +1,10 @@
 import { Get, Controller, Render } from '@nestjs/common';
 import { IsPublic } from '@/common/decorators/is-public.decorator';
-import environment from './configs/environment';
+import { ApiExcludeController } from '@nestjs/swagger';
+import environment from '@/configs/environment';
 
 @Controller()
+@ApiExcludeController()
 export class AppController {
   @Get()
   @IsPublic()
