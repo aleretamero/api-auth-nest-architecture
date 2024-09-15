@@ -14,6 +14,7 @@ import { SupabaseModule } from '@/infra/storage/supabase/supabase.module';
 import { LocalStorageModule } from '@/infra/storage/local-storage/local-storage.module';
 import { TwoFactorAuthModule } from '@/infra/two-factor-auth/two-factor-auth.module';
 import { EncryptModule } from '@/infra/encrypt/encrypt.module';
+import { QRCodeModule } from '@/infra/qrcode/qrcode.module';
 
 export default [
   TypeormModule,
@@ -31,4 +32,5 @@ export default [
   RateLimitingModule,
   ServeStaticModule,
   TwoFactorAuthModule,
+  QRCodeModule,
 ] as Type[];
