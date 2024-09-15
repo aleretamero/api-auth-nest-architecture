@@ -13,6 +13,7 @@ import { LogErrorModule } from '@/infra/logging/log-error/log-error.module';
 import { SupabaseModule } from '@/infra/storage/supabase/supabase.module';
 import { LocalStorageModule } from '@/infra/storage/local-storage/local-storage.module';
 import { TwoFactorAuthModule } from '@/infra/two-factor-auth/two-factor-auth.module';
+import { EncryptModule } from '@/infra/encrypt/encrypt.module';
 
 export default [
   TypeormModule,
@@ -25,6 +26,7 @@ export default [
   LogErrorModule,
   JwtModule,
   HashModule,
+  EncryptModule,
   I18nModule,
   RateLimitingModule,
   ServeStaticModule,
