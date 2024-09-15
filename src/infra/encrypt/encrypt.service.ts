@@ -13,7 +13,7 @@ export class EncryptService {
     );
   }
 
-  encrypt(secretKey: string, text: string): string {
+  async encrypt(secretKey: string, text: string): Promise<string> {
     const secretKeyBuffer = this.getSecretKeyBuffer(secretKey);
     const iv = crypto.randomBytes(this.IV_LENGTH);
     const cipher = crypto.createCipheriv(this.ALGORITHM, secretKeyBuffer, iv);
@@ -22,7 +22,7 @@ export class EncryptService {
     return `${iv.toString('hex')}:${encrypted}`;
   }
 
-  decrypt(secretKey: string, text: string): string {
+  async decrypt(secretKey: string, text: string): Promise<string> {
     const secretKeyBuffer = this.getSecretKeyBuffer(secretKey);
     const [iv, encrypted] = text.split(':');
     const decipher = crypto.createDecipheriv(
