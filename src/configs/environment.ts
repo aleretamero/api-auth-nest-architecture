@@ -13,6 +13,9 @@ const schema = z.object({
   // Frontend
   FRONTEND_URL: z.string().url().optional(),
 
+  // 2FA
+  TWO_FACTOR_AUTH_ENCRYPTION_KEY: z.string(),
+
   // JWT
   JWT_SECRET: z.string(),
 
