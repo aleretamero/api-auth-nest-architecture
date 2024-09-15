@@ -7,6 +7,9 @@ const schema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']),
   PORT: z.coerce.number(),
 
+  // Docs
+  SWAGGER_PREFIX: z.string().default('docs'),
+
   // Frontend
   FRONTEND_URL: z.string().url().optional(),
 

@@ -15,7 +15,7 @@ export default (app: INestApplication) => {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  const prefix = 'docs';
+  const prefix = environment.SWAGGER_PREFIX;
   const port = environment.PORT;
 
   SwaggerModule.setup(prefix, app, document);
