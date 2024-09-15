@@ -12,6 +12,7 @@ import { ServeStaticModule } from '@/infra/server-static/server-static.module';
 import { LogErrorModule } from '@/infra/logging/log-error/log-error.module';
 import { SupabaseModule } from '@/infra/storage/supabase/supabase.module';
 import { LocalStorageModule } from '@/infra/storage/local-storage/local-storage.module';
+import { TwoFactorAuthModule } from '@/infra/two-factor-auth/two-factor-auth.module';
 
 export default [
   TypeormModule,
@@ -27,4 +28,5 @@ export default [
   I18nModule,
   RateLimitingModule,
   ServeStaticModule,
+  TwoFactorAuthModule,
 ] as Type[];
