@@ -38,7 +38,7 @@ export class PersonalData {
     onUpdate: 'CASCADE',
     deferrable: 'INITIALLY DEFERRED',
   })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user?: User;
 
   constructor(partialEntity: Partial<PersonalData>) {
