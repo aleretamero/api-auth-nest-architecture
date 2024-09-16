@@ -12,6 +12,7 @@ import { SupabaseModule } from '@/infra/storage/supabase/supabase.module';
 import { LocalStorageModule } from '@/infra/storage/local-storage/local-storage.module';
 import { CacheModule } from '@/infra/cache/cache.module';
 import { RemoveUserAvatarJob } from '@/modules/user/jobs/remove-user-avatar.job';
+import { User2FAModule } from '@/modules/user/sub-modules/user-2fa/user-2fa.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { RemoveUserAvatarJob } from '@/modules/user/jobs/remove-user-avatar.job'
     LocalStorageModule,
     SessionModule,
     UserCodeModule,
+    User2FAModule,
     CacheModule,
   ],
   controllers: [UserController],

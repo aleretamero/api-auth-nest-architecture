@@ -13,6 +13,7 @@ import { Session } from '@/modules/user/sub-modules/session/entities/session.ent
 import { UserCode } from '@/modules/user/sub-modules/user-code/entities/user-code.entity';
 import { PersonalData } from '@/modules/user/sub-modules/personal-data/entities/personal-data.entity';
 import { Role } from '@/modules/user/enums/role.enum';
+import { User2FA } from '../sub-modules/user-2fa/entities/user-2fa.entity';
 
 @Entity('users')
 export class User {
@@ -58,6 +59,11 @@ export class User {
     cascade: true,
   })
   personalData?: PersonalData | null;
+
+  @OneToOne(() => User2FA, (x) => x.user, {
+    cascade: true,
+  })
+  user2FA?: User2FA | null;
 
   constructor(partialEntity: Partial<User>) {
     Object.assign(this, partialEntity);

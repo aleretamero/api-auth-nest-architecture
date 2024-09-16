@@ -4,6 +4,7 @@ import { User } from '@/modules/user/entities/user.entity';
 import { Injectable, Scope } from '@nestjs/common';
 import { EntityManager, QueryRunner, Repository } from 'typeorm';
 import { PersonalData } from '@/modules/user/sub-modules/personal-data/entities/personal-data.entity';
+import { User2FA } from '@/modules/user/sub-modules/user-2fa/entities/user-2fa.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TypeormService {
@@ -47,5 +48,9 @@ export class TypeormService {
 
   get personalData(): Repository<PersonalData> {
     return this.$entityManager.getRepository(PersonalData);
+  }
+
+  get user2FA(): Repository<User2FA> {
+    return this.$entityManager.getRepository(User2FA);
   }
 }
